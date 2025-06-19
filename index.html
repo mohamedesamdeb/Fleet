@@ -110,16 +110,6 @@
             <i data-lucide="user-plus" class="w-7 h-7 text-orange-400"></i>
             <span class="link-text hidden">إضافة موظف</span>
           </button>
-
-          <button
-            onclick="loadContent('addEmployee')"
-            class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-orange-800 transition text-right"
-          >
-            <i data-lucide="user" class="w-7 h-7 text-orange-400"></i>
-            <span class="link-text hidden">بيانات</span>
-          </button>
-
-
         </div>
       </aside>
 
@@ -304,6 +294,21 @@
     <h2 class="text-2xl font-bold text-orange-800 mb-4">📌 إضافة موظف</h2>
     <div class="space-y-6">
 
+      <div class="flex flex-wrap items-start gap-6">
+        <!-- رفع الصورة -->
+        <div class="w-full sm:w-1/4 flex flex-col items-center">
+          <label class="mb-2 font-medium text-gray-700">📷 صورة الموظف</label>
+          <!-- مربع تحميل الصورة -->
+<label for="photo" class="relative w-48 h-48 bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-300 rounded-xl overflow-hidden">
+  <span id="plusIcon" class="text-5xl text-gray-500 absolute">+</span>
+  <img id="preview" src="" class="w-full h-full object-cover hidden" style="border-radius: 12px;" />
+</label>
+<input type="file" id="photo" accept="image/*" class="hidden" onchange="previewImage()" />
+
+<input type="file" id="photo" accept="image/*" class="hidden" onchange="previewImage()" />
+
+        </div>
+
         <!-- باقي النموذج -->
         <div class="w-full sm:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -335,17 +340,7 @@
             <input type="date" id="hireDate" class="input-style" />
           </div>
 
-          <div>
-  <label for="status" class="block text-sm text-gray-600 mb-1">💍 الحالة الاجتماعية</label>
-  <select id="status" class="input-style">
-    <option value="">اختر الحالة</option>
-    <option value="أعزب">أعزب</option>
-    <option value="متزوج">متزوج</option>
-    <option value="مطلق">مطلق</option>
-    <option value="أرمل">أرمل</option>
-  </select>
-</div>
-
+          <input type="text" id="status" placeholder="الحالة الاجتماعية" class="input-style" />
           <input type="number" id="salary" placeholder="المرتب بالجنيه" class="input-style" />
 
         </div>
@@ -588,8 +583,7 @@
         }
       }
 
-      // الكود المؤقت لإرسال البيانات
-      function submitEmployee() {
+      async function submitEmployee() {
   const name = document.getElementById("name").value;
   const nationalId = document.getElementById("nationalId").value;
   const address = document.getElementById("address").value;
@@ -600,43 +594,38 @@
   const hireDate = document.getElementById("hireDate").value;
   const status = document.getElementById("status").value;
   const salary = document.getElementById("salary").value;
-  const office = document.getElementById("office").value;
+  const photo = document.getElementById("photo").files[0];
 
-  if (!name || !nationalId || !mobile) {
-    alert("⚠️ من فضلك املأ الحقول الأساسية (الاسم - الرقم القومي - الموبايل).");
+  if (!name || !photo) {
+    alert("⚠️ من فضلك أدخل اسم الموظف وارفع صورة.");
     return;
   }
 
-  const formData = {
-    name,
-    nationalId,
-    address,
-    mobile,
-    jobTitle,
-    project,
-    birthDate,
-    hireDate,
-    status,
-    salary,
-    office,
+  // تحويل الصورة إلى Base64
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const photoBase64 = reader.result.split(",")[1];
+
+    const payload = {
+      name, nationalId, address, mobile, jobTitle, project,
+      birthDate, hireDate, status, salary, photoBase64
+    };
+
+    try {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbyZGmJf1iNJiZGfKzxJIi1jf1w6Zxbkas6Sf7BGCEJvddwiu8QcVX0axe_2JSKfGGII/exec", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const result = await response.text();
+      Swal.fire("✅ تم الحفظ", result, "success");
+    } catch (err) {
+      Swal.fire("❌ خطأ", err.message, "error");
+    }
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbyKpO4uw1oXoJ6f_hXJ9RK9berVYPqS5_r1bjNaVo8R-A1u4QZ1TGka9mdAUoW8l4MtYQ/exec", {
-    method: "POST",
-    body: JSON.stringify(formData),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.text())
-    .then((msg) => {
-      Swal.fire("🎉 تم الإرسال", "تم تسجيل بيانات الموظف بنجاح", "success");
-      document.querySelectorAll(".input-style").forEach((el) => (el.value = ""));
-    })
-    .catch((err) => {
-      console.error(err);
-      Swal.fire("❌ خطأ", "حدث خطأ أثناء إرسال البيانات", "error");
-    });
+  reader.readAsDataURL(photo);
 }
 
     </script>
