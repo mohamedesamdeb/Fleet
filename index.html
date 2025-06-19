@@ -116,7 +116,7 @@
             class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-orange-800 transition text-right"
           >
             <i data-lucide="user" class="w-7 h-7 text-orange-400"></i>
-            <span class="link-text hidden">بيانات الموظفين</span>
+            <span class="link-text hidden">بيانات</span>
           </button>
 
 
@@ -303,21 +303,6 @@
           main.innerHTML = `
     <h2 class="text-2xl font-bold text-orange-800 mb-4">📌 إضافة موظف</h2>
     <div class="space-y-6">
-
-      <div class="flex flex-wrap items-start gap-6">
-        <!-- رفع الصورة -->
-        <div class="w-full sm:w-1/4 flex flex-col items-center">
-          <label class="mb-2 font-medium text-gray-700">📷 صورة الموظف</label>
-          <!-- مربع تحميل الصورة -->
-<label for="photo" class="relative w-48 h-48 bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-300 rounded-xl overflow-hidden">
-  <span id="plusIcon" class="text-5xl text-gray-500 absolute">+</span>
-  <img id="preview" src="" class="w-full h-full object-cover hidden" style="border-radius: 12px;" />
-</label>
-<input type="file" id="photo" accept="image/*" class="hidden" onchange="previewImage()" />
-
-<input type="file" id="photo" accept="image/*" class="hidden" onchange="previewImage()" />
-
-        </div>
 
         <!-- باقي النموذج -->
         <div class="w-full sm:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -605,67 +590,53 @@
 
       // الكود المؤقت لإرسال البيانات
       function submitEmployee() {
-  const input = (id) => document.getElementById(id)?.value || "";
-  const fileInput = document.getElementById("photo");
+  const name = document.getElementById("name").value;
+  const nationalId = document.getElementById("nationalId").value;
+  const address = document.getElementById("address").value;
+  const mobile = document.getElementById("mobile").value;
+  const jobTitle = document.getElementById("jobTitle").value;
+  const project = document.getElementById("project").value;
+  const birthDate = document.getElementById("birthDate").value;
+  const hireDate = document.getElementById("hireDate").value;
+  const status = document.getElementById("status").value;
+  const salary = document.getElementById("salary").value;
+  const office = document.getElementById("office").value;
 
-  if (!fileInput || !fileInput.files[0]) {
-    alert("⚠️ من فضلك ارفع صورة الموظف");
+  if (!name || !nationalId || !mobile) {
+    alert("⚠️ من فضلك املأ الحقول الأساسية (الاسم - الرقم القومي - الموبايل).");
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const imageBase64 = e.target.result;
-
-    const data = {
-      name: input("name"),
-      nationalId: input("nationalId"),
-      address: input("address"),
-      mobile: input("mobile"),
-      jobTitle: input("jobTitle"),
-      project: input("project"),
-      birthDate: input("birthDate"),
-      hireDate: input("hireDate"),
-      status: input("status"),
-      salary: input("salary"),
-      office: input("office"),
-      imageBase64,
-    };
-
-fetch("https://script.google.com/macros/s/AKfycbw2lIew9OxypJDhQBjsCDPSXGE5md8ixiCtx3xv3H2uhc8BvPrUMtlJfcXDvula-za2/exec", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.result === "success") {
-          alert("✅ تم إضافة الموظف بنجاح");
-          resetEmployeeForm();
-        } else {
-          alert("❌ فشل: " + res.message);
-        }
-      })
-      .catch((err) => {
-        alert("❌ فشل الاتصال بالسيرفر");
-        console.error(err);
-      });
+  const formData = {
+    name,
+    nationalId,
+    address,
+    mobile,
+    jobTitle,
+    project,
+    birthDate,
+    hireDate,
+    status,
+    salary,
+    office,
   };
 
-  reader.readAsDataURL(fileInput.files[0]);
-}
-function resetEmployeeForm() {
-  [
-    "name", "nationalId", "address", "mobile", "jobTitle",
-    "project", "birthDate", "hireDate", "status", "salary", "office"
-  ].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = "";
-  });
-
-  document.getElementById("photo").value = "";
-  document.getElementById("preview")?.classList.add("hidden");
-  document.getElementById("plusIcon")?.classList.remove("hidden");
+  fetch("https://script.google.com/macros/s/AKfycby8v9mWu9cFVEWLIFXia-Pp1EaW3KCUy-7QjfqTKlHL9uBDda7ylqHwwCUymKS75POz2A/exec", {
+    method: "POST",
+    body: JSON.stringify(formData),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.text())
+    .then((msg) => {
+      Swal.fire("🎉 تم الإرسال", "تم تسجيل بيانات الموظف بنجاح", "success");
+      document.querySelectorAll(".input-style").forEach((el) => (el.value = ""));
+    })
+    .catch((err) => {
+      console.error(err);
+      Swal.fire("❌ خطأ", "حدث خطأ أثناء إرسال البيانات", "error");
+    });
 }
 
     </script>
