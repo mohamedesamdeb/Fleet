@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة التحكم الاحترافية</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      body {
+        font-family: "Tajawal", sans-serif;
+      }
+      .sidebar:hover {
+        width: 220px;
+      }
+      .sidebar:hover .link-text {
+        display: inline;
+      }
+      .input-style {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+      }
+
+      /** Tailwind Custom Animation -->**/
+      @keyframes spin-slow {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .animate-spin-slow {
+        animation: spin-slow 2s linear infinite;
+      }
+      .animate-fade-in {
+        animation: fade-in 0.5s ease-out forwards;
+      }
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="flex h-screen">
+      <!-- الشريط الجانبي -->
+      <aside
+        class="sidebar bg-gradient-to-b from-gray-900 to-gray-800 text-white w-16 hover:w-56 transition-all duration-300 overflow-hidden shadow-lg"
+      >
+        <div class="flex flex-col h-full p-2 space-y-6 pt-6">
+          <div class="flex items-center space-x-2 px-4 mb-4">
+            <i data-lucide="layout-dashboard" class="w-6 h-6 text-blue-400"></i>
+            <span class="link-text hidden font-semibold text-lg"
+              >لوحة التحكم</span
+            >
+          </div>
+
+          <button
+            onclick="loadContent('home')"
+            class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-gray-800 transition text-right"
+          >
+            <i data-lucide="home" class="w-7 h-7 text-yellow-400"></i>
+            <span class="link-text hidden">الصفحة الرئيسية</span>
+          </button>
+          <button
+            onclick="loadContent('attendance')"
+            class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-blue-800 transition text-right"
+          >
+            <i data-lucide="clock-9" class="w-7 h-7 text-blue-300"></i>
+            <span class="link-text hidden">الحضور والانصراف</span>
+          </button>
+          <button
+            onclick="loadContent('housing')"
+            class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-green-800 transition text-right"
+          >
+            <i data-lucide="cable" class="w-7 h-7 text-green-300"></i>
+            <span class="link-text hidden">التسكين</span>
+          </button>
+          <button
+            onclick="loadContent('repayment')"
+            class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-purple-800 transition text-right"
+          >
+            <i
+              data-lucide="circle-dollar-sign"
+              class="w-7 h-7 text-purple-300"
+            ></i>
+            <span class="link-text hidden">Repayment</span>
+          </button>
+
+          <button
+            onclick="loadContent('addEmployee')"
+            class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-orange-800 transition text-right"
+          >
+            <i data-lucide="user-plus" class="w-7 h-7 text-orange-400"></i>
+            <span class="link-text hidden">إضافة موظف</span>
+          </button>
+
+          <button
+            onclick="loadContent('addEmployee')"
+            class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-orange-800 transition text-right"
+          >
+            <i data-lucide="user" class="w-7 h-7 text-orange-400"></i>
+            <span class="link-text hidden">بيانات الموظفين</span>
+          </button>
+
+
+        </div>
+      </aside>
+
+      <!-- مساحة المحتوى -->
+      <main
+        class="flex-1 p-8 bg-white rounded-l-3xl shadow-inner overflow-y-auto"
+      >
+        <div id="mainContent">
+          <h1 class="text-3xl font-bold text-gray-800 mb-4">👋 أهلاً بيك</h1>
+          <p class="text-gray-600">
+            استخدم القائمة على اليمين لاستعراض البرامج المختلفة.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- شاشة تحميل زجاجية احترافية -->
+    <div
+      id="loaderOverlay"
+      class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md flex justify-center items-center z-50 hidden"
+    >
+      <div
+        class="bg-white dark:bg-gray-900 bg-opacity-70 dark:bg-opacity-80 px-8 py-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col items-center space-y-4 animate-fade-in"
+      >
+        <!-- Animation -->
+        <div class="relative w-16 h-16">
+          <div
+            class="absolute inset-0 border-4 border-blue-500 border-dashed rounded-full animate-spin-slow"
+          ></div>
+          <div
+            class="absolute inset-2 bg-blue-500 rounded-full shadow-inner animate-ping"
+          ></div>
+        </div>
+        <!-- Text -->
+        <p class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+          جاري تحميل البيانات
+        </p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          من فضلك انتظر
+          <span id="countdown" class="text-blue-600 font-bold">0</span> ثانية...
+        </p>
+      </div>
+    </div>
+
+    <!-- سكريبت الصفحة -->
+    <script>
+      lucide.createIcons();
+
+      let lastDataTime = null;
+
+      function loadContent(section) {
+        const main = document.getElementById("mainContent");
+
+        if (section === "attendance") {
+          main.innerHTML = `
+      <h2 class="text-2xl font-bold text-blue-800 mb-4">📋 جدول الحضور والانصراف</h2>
+      <div class="flex flex-wrap gap-4 items-center bg-blue-50 p-4 rounded shadow mb-4">
+        <input type="text" id="searchName" placeholder="ابحث باسم الفني..." class="px-4 py-2 border border-gray-300 rounded w-full md:w-1/3" oninput="filterTable()" />
+        <div class="flex items-center gap-2">
+          <label for="fromDate" class="text-sm text-gray-700">من:</label>
+          <input type="date" id="fromDate" class="px-2 py-1 border rounded" onchange="filterTable()" />
+        </div>
+        <div class="flex items-center gap-2">
+          <label for="toDate" class="text-sm text-gray-700">إلى:</label>
+          <input type="date" id="toDate" class="px-2 py-1 border rounded" onchange="filterTable()" />
+        </div>
+        
+        <button onclick="fetchNewAttendance()" class="ml-auto bg-blue-700 text-white px-4 py-2 rounded shadow hover:bg-blue-800 flex items-center gap-2">
+          <i data-lucide="refresh-ccw" class="w-4 h-4"></i>
+          <span>تحديث البيانات</span>
+        </button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300 rounded shadow">
+          <thead class="bg-blue-200 text-blue-900">
+            <tr>
+              <th class="px-4 py-2 border">الوقت</th>
+              <th class="px-4 py-2 border">الاسم</th>
+              <th class="px-4 py-2 border">المكتب</th>
+              <th class="px-4 py-2 border">الإجراء</th>
+              <th class="px-4 py-2 border">Latitude</th>
+              <th class="px-4 py-2 border">Longitude</th>
+              <th class="px-4 py-2 border">رابط الصورة</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTableBody"></tbody>
+        </table>
+      </div>
+    `;
+          lucide.createIcons();
+          fetchNewAttendance();
+        } else if (section === "housing") {
+          main.innerHTML = `
+    <h2 class="text-2xl font-bold text-green-800 mb-4">📦 جدول التسكين</h2>
+    <div class="flex flex-wrap gap-4 items-center bg-blue-50 p-4 rounded shadow mb-4">
+        <input type="text" id="searchName" placeholder="ابحث باسم الفني..." class="px-4 py-2 border border-gray-300 rounded w-full md:w-1/3" oninput="filterTable()" />
+  <input type="text" id="searchSiteID" placeholder="ابحث برقم الموقع..." class="px-4 py-2 border border-gray-300 rounded w-full md:w-1/3" oninput="filterTable()" />
+        <button onclick="fetchHousingData()" class="ml-auto bg-blue-700 text-white px-4 py-2 rounded shadow hover:bg-blue-800 flex items-center gap-2">
+         <i data-lucide="refresh-ccw" class="w-4 h-4"></i>
+          <span>تحديث البيانات</span>
+        </button>
+      </div>
+    <div class="overflow-auto rounded shadow border border-gray-300">
+      <table class="min-w-full bg-white text-center border border-gray-200">
+        <thead id="housingTableHead" class="bg-green-100 text-green-800 font-bold">
+          <tr>
+              <th class="px-4 py-2 border">الوقت</th>
+              <th class="px-4 py-2 border">نوع التسكين</th>
+              <th class="px-4 py-2 border">أسم الفني</th>
+              <th class="px-4 py-2 border">المكتب</th>
+              <th class="px-4 py-2 border">رقم الهوندا</th>
+              <th class="px-4 py-2 border">رقم الموقع</th>
+              <th class="px-4 py-2 border">التاريخ</th>
+              <th class="px-4 py-2 border">تكت التسكين</th>
+              <th class="px-4 py-2 border">سبب التسكين</th>
+              <th class="px-4 py-2 border">ترانسميشن فقط </th>
+
+
+            </tr>
+          </thead>
+        <tbody id="housingTableBody"></tbody>
+      </table>
+    </div>
+  `;
+          fetchHousingData();
+        } else if (section === "repayment") {
+          main.innerHTML = `
+      <h2 class="text-2xl font-bold text-purple-800 mb-2">📸 صفحة Repayment</h2>
+      <p class="text-gray-700">التقاط الصور ورفع البيانات هنا.</p>
+    `;
+        } else if (section === "home") {
+          main.innerHTML = `
+      <h2 class="text-2xl font-bold text-yellow-600 mb-4">📊 الصفحة الرئيسية</h2>
+      <p class="text-gray-700 mb-4">تحليل الحضور للموظفين</p>
+      <div class="bg-white p-6 rounded shadow-md w-full max-w-lg mx-auto">
+        <canvas id="attendanceChart" width="400" height="400"></canvas>
+      </div>
+    `;
+
+          setTimeout(() => {
+            const ctx = document
+              .getElementById("attendanceChart")
+              .getContext("2d");
+            new Chart(ctx, {
+              type: "pie",
+              data: {
+                labels: ["منتظم", "كثير الغياب"],
+                datasets: [
+                  {
+                    label: "نسبة الموظفين",
+                    data: [75, 25], // ✏️ عدل القيم حسب بياناتك
+                    backgroundColor: ["#10B981", "#EF4444"],
+                    borderWidth: 1,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: "bottom",
+                    labels: {
+                      font: {
+                        size: 14,
+                        family: "Tajawal",
+                      },
+                    },
+                  },
+                  title: {
+                    display: true,
+                    text: "تحليل الحضور",
+                    font: {
+                      size: 18,
+                    },
+                  },
+                },
+              },
+            });
+          }, 100);
+        } else if (section === "addEmployee") {
+          main.innerHTML = `
+    <h2 class="text-2xl font-bold text-orange-800 mb-4">📌 إضافة موظف</h2>
+    <div class="space-y-6">
+
+      <div class="flex flex-wrap items-start gap-6">
+        <!-- رفع الصورة -->
+        <div class="w-full sm:w-1/4 flex flex-col items-center">
+          <label class="mb-2 font-medium text-gray-700">📷 صورة الموظف</label>
+          <!-- مربع تحميل الصورة -->
+<label for="photo" class="relative w-48 h-48 bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-300 rounded-xl overflow-hidden">
+  <span id="plusIcon" class="text-5xl text-gray-500 absolute">+</span>
+  <img id="preview" src="" class="w-full h-full object-cover hidden" style="border-radius: 12px;" />
+</label>
+<input type="file" id="photo" accept="image/*" class="hidden" onchange="previewImage()" />
+
+<input type="file" id="photo" accept="image/*" class="hidden" onchange="previewImage()" />
+
+        </div>
+
+        <!-- باقي النموذج -->
+        <div class="w-full sm:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <input type="text" id="name" placeholder="اسم الموظف" class="input-style" />
+          <input type="text" id="nationalId" placeholder="الرقم القومي" class="input-style" />
+
+          <input type="text" id="address" placeholder="العنوان" class="input-style" />
+          <input type="text" id="mobile" placeholder="رقم الموبايل" class="input-style" />
+
+          <input type="text" id="jobTitle" placeholder="الوظيفة" class="input-style" />
+          <input type="text" id="project" placeholder="المشروع" class="input-style" />
+          <div>
+  <label for="office" class="block text-sm text-gray-600 mb-1">🏢 المكتب</label>
+  <select id="office" class="input-style">
+    <option value="">اختر المكتب</option>
+    <option value="شبرا">شبرا</option>
+    <option value="جسر السويس">جسر السويس</option>
+    <option value="المهندسين">المهندسين</option>
+  </select>
+</div>
+
+
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">📅 تاريخ الميلاد</label>
+            <input type="date" id="birthDate" class="input-style" />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-600 mb-1">🗓️ تاريخ التعيين</label>
+            <input type="date" id="hireDate" class="input-style" />
+          </div>
+
+          <div>
+  <label for="status" class="block text-sm text-gray-600 mb-1">💍 الحالة الاجتماعية</label>
+  <select id="status" class="input-style">
+    <option value="">اختر الحالة</option>
+    <option value="أعزب">أعزب</option>
+    <option value="متزوج">متزوج</option>
+    <option value="مطلق">مطلق</option>
+    <option value="أرمل">أرمل</option>
+  </select>
+</div>
+
+          <input type="number" id="salary" placeholder="المرتب بالجنيه" class="input-style" />
+
+        </div>
+      </div>
+
+      <button onclick="submitEmployee()" class="bg-orange-600 text-white px-6 py-3 rounded shadow hover:bg-orange-700">
+        ➕ إضافة الموظف
+      </button>
+    </div>
+  `;
+
+          lucide.createIcons();
+        }
+      }
+
+      function filterBySiteID() {
+        const input = document
+          .getElementById("searchSiteID")
+          .value.trim()
+          .toLowerCase();
+        const rows = document.querySelectorAll("#housingTableBody tr");
+
+        rows.forEach((row) => {
+          const siteID = row.cells[5]?.textContent.toLowerCase() || "";
+          if (siteID.includes(input)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      function fetchNewAttendance() {
+        const overlay = document.getElementById("loaderOverlay");
+        const countdownText = document.getElementById("countdown");
+        overlay.classList.remove("hidden");
+
+        let seconds = 0;
+        countdownText.textContent = seconds;
+        const timer = setInterval(() => {
+          seconds++;
+          countdownText.textContent = seconds;
+        }, 1000);
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycby5QdbFnpkhnBFkl5el6B2rflE1HcCHTMzV2hERMhbll4veiAESm4ElsQf7Bey3sDzUAQ/exec"
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            const tableBody = document.getElementById("attendanceTableBody");
+            tableBody.innerHTML = "";
+
+            data.forEach((row) => {
+              const tr = document.createElement("tr");
+              tr.className = "text-center hover:bg-gray-100 transition";
+              tr.innerHTML = `
+          <td class="px-4 py-2 border">${row["الوقت"]}</td>
+          <td class="px-4 py-2 border">${row["الاسم"]}</td>
+          <td class="px-4 py-2 border">${row["المكتب"]}</td>
+          <td class="px-4 py-2 border font-bold ${
+            row["الإجراء"] === "دخول" ? "text-green-600" : "text-red-600"
+          }">${row["الإجراء"]}</td>
+          <td class="px-4 py-2 border">${row["خط العرض (Latitude)"]}</td>
+          <td class="px-4 py-2 border">${row["خط الطول (Longitude)"]}</td>
+          <td class="px-4 py-2 border"><a href="${
+            row["الصورة (رابط)"]
+          }" target="_blank" class="text-blue-500 underline">عرض</a></td>
+        `;
+              tableBody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("❌ حدث خطأ أثناء تحميل البيانات.");
+          })
+          .finally(() => {
+            clearInterval(timer);
+            overlay.classList.add("hidden");
+          });
+      }
+
+      function fetchHousingData() {
+        const overlay = document.getElementById("loaderOverlay");
+        const countdownText = document.getElementById("countdown");
+        overlay.classList.remove("hidden");
+
+        let seconds = 0;
+        countdownText.textContent = seconds;
+        const timer = setInterval(() => {
+          seconds++;
+          countdownText.textContent = seconds;
+        }, 1000);
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycbxoeOxRbxrbvYiqS_gtvYJuPMDasV3rbFyg-GyZhR5Scdj30OGhU6wq1jDtfMnWV9G7ig/exec"
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            const tableBody = document.getElementById("housingTableBody");
+            tableBody.innerHTML = "";
+
+            data.forEach((row) => {
+              const tr = document.createElement("tr");
+              tr.className = "text-center hover:bg-gray-100 transition";
+              tr.innerHTML = `
+          <td class="px-4 py-2 border">${formatDateTime(
+            row["Date - Time"]
+          )}</td>
+
+          <td class="px-4 py-2 border">${row["نوع التسكين"] || ""}</td>
+<td class="px-4 py-2 border">${row["Resource Name"] || ""}</td>
+<td class="px-4 py-2 border">${row["Office"] || ""}</td>
+<td class="px-4 py-2 border">${row["PG S.N."] || ""}</td>
+<td class="px-4 py-2 border">${row["Site ID"] || ""}</td>
+
+<!-- التاريخ والوقت بعد التنسيق -->
+<td class="px-4 py-2 border">${formatDateOnly(row["Date"])}</td>
+<td class="px-4 py-2 border">${formatTimeOnly(row["Time"])}</td>
+
+<td class="px-4 py-2 border">${row["Category"] || ""}</td>
+<td class="px-4 py-2 border">${row["Fuel spear"] || ""}</td>
+
+        `;
+              tableBody.appendChild(tr);
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("❌ حدث خطأ أثناء تحميل بيانات التسكين.");
+          })
+          .finally(() => {
+            clearInterval(timer);
+            overlay.classList.add("hidden");
+          });
+      }
+
+      function formatDateTime(dateStr) {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        if (isNaN(date)) return dateStr; // لو التاريخ مش صالح
+
+        // تنسيق التاريخ والوقت حسب توقيت مصر (GMT+3)
+        return date.toLocaleString("ar-EG", {
+          timeZone: "Africa/Cairo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function filterTable() {
+        const searchName =
+          document.getElementById("searchName")?.value.trim() || "";
+        const searchSiteID =
+          document.getElementById("searchSiteID")?.value.trim() || "";
+        const fromDate = document.getElementById("fromDate")?.value || "";
+        const toDate = document.getElementById("toDate")?.value || "";
+
+        // جدول التسكين
+        const housingRows = document.querySelectorAll("#housingTableBody tr");
+        housingRows.forEach((row) => {
+          const name = row.querySelector("td:nth-child(3)")?.textContent || "";
+          const siteID =
+            row.querySelector("td:nth-child(6)")?.textContent || "";
+          const date = row.querySelector("td:nth-child(7)")?.textContent || "";
+
+          let show = true;
+
+          if (searchName && !name.includes(searchName)) show = false;
+          if (searchSiteID && !siteID.includes(searchSiteID)) show = false;
+          if (fromDate && date < fromDate) show = false;
+          if (toDate && date > toDate) show = false;
+
+          row.style.display = show ? "" : "none";
+        });
+
+        // جدول الحضور
+        const attendanceRows = document.querySelectorAll(
+          "#attendanceTableBody tr"
+        );
+        attendanceRows.forEach((row) => {
+          const name = row.querySelector("td:nth-child(2)")?.textContent || "";
+          const dateTimeText =
+            row.querySelector("td:nth-child(1)")?.textContent || "";
+          const dateObj = new Date(dateTimeText.replace(",", ""));
+
+          let show = true;
+          if (searchName && !name.includes(searchName)) show = false;
+
+          // فلتر التاريخ بعد التحويل
+          if (!isNaN(dateObj)) {
+            if (fromDate && dateObj < new Date(fromDate)) show = false;
+            if (toDate && dateObj > new Date(toDate)) show = false;
+          }
+
+          row.style.display = show ? "" : "none";
+        });
+      }
+
+      function formatDateOnly(dateStr) {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        if (isNaN(date)) return dateStr;
+
+        return date.toLocaleDateString("ar-EG", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+      }
+
+      function formatTimeOnly(timeStr) {
+        if (!timeStr) return "";
+        const date = new Date("1970-01-01T" + timeStr);
+        if (isNaN(date)) return timeStr;
+
+        return date.toLocaleTimeString("ar-EG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function previewImage() {
+        const input = document.getElementById("photo");
+        const preview = document.getElementById("preview");
+        const plusIcon = document.getElementById("plusIcon");
+
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.classList.remove("hidden");
+            plusIcon.classList.add("hidden");
+          };
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      // الكود المؤقت لإرسال البيانات
+      function submitEmployee() {
+  const input = (id) => document.getElementById(id)?.value || "";
+  const fileInput = document.getElementById("photo");
+
+  if (!fileInput || !fileInput.files[0]) {
+    alert("⚠️ من فضلك ارفع صورة الموظف");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const imageBase64 = e.target.result;
+
+    const data = {
+      name: input("name"),
+      nationalId: input("nationalId"),
+      address: input("address"),
+      mobile: input("mobile"),
+      jobTitle: input("jobTitle"),
+      project: input("project"),
+      birthDate: input("birthDate"),
+      hireDate: input("hireDate"),
+      status: input("status"),
+      salary: input("salary"),
+      office: input("office"),
+      imageBase64,
+    };
+
+    fetch("https://script.google.com/macros/s/AKfycbzG-MlLhsnPQE9bzhwmnTWNBZHaNACVYHp1hvmDwSKJWtQadta7Pv5Sl5_3hira_oo_9g/exec", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.result === "success") {
+          alert("✅ تم إضافة الموظف بنجاح");
+          resetEmployeeForm();
+        } else {
+          alert("❌ فشل: " + res.message);
+        }
+      })
+      .catch((err) => {
+        alert("❌ فشل الاتصال بالسيرفر");
+        console.error(err);
+      });
+  };
+
+  reader.readAsDataURL(fileInput.files[0]);
+}
+
+function resetEmployeeForm() {
+  [
+    "name", "nationalId", "address", "mobile", "jobTitle",
+    "project", "birthDate", "hireDate", "status", "salary", "office"
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+
+  document.getElementById("photo").value = "";
+  document.getElementById("preview").classList.add("hidden");
+  document.getElementById("plusIcon").classList.remove("hidden");
+}
+
+    </script>
+  </body>
+</html>
