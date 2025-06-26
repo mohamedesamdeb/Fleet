@@ -63,6 +63,15 @@
         transform: scale(1);
       }
     }
+
+    .scrollbar-hide {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
   </style>
 </head>
 
@@ -70,12 +79,13 @@
   <div class="flex h-screen">
     <!-- الشريط الجانبي -->
     <aside
-      class="sidebar bg-gradient-to-b from-gray-900 to-gray-800 text-white w-16 hover:w-56 transition-all duration-300 overflow-hidden shadow-lg">
+      class="sidebar bg-gradient-to-b from-gray-900 to-gray-800 text-white w-16 hover:w-56 transition-all duration-300 overflow-y-auto max-h-screen scrollbar-hide shadow-lg">
       <div class="flex flex-col h-full p-2 space-y-6 pt-6">
         <div class="flex items-center space-x-2 px-4 mb-4">
           <i data-lucide="layout-dashboard" class="w-6 h-6 text-blue-400"></i>
           <span class="link-text hidden font-semibold text-lg">لوحة التحكم</span>
         </div>
+
         <button onclick="loadContent('home')"
           class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-gray-800 transition text-right">
           <i data-lucide="home" class="w-7 h-7 text-yellow-400"></i>
@@ -105,6 +115,16 @@
           class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-teal-700 transition text-right">
           <i data-lucide="users" class="w-7 h-7 text-teal-400"></i>
           <span class="link-text hidden">عرض الموظفين</span>
+        </button>
+        <button onclick="loadContent('pgRoster')"
+          class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-pink-800 transition text-right">
+          <i data-lucide="calendar-days" class="w-7 h-7 text-pink-300"></i>
+          <span class="link-text hidden">PG Roster</span>
+        </button>
+        <button onclick="loadContent('store')"
+          class="flex items-center space-x-2 px-4 py-3 rounded hover:bg-lime-800 transition text-right">
+          <i data-lucide="package-plus" class="w-7 h-7 text-lime-400"></i>
+          <span class="link-text hidden">إضافة للمخزن</span>
         </button>
       </div>
     </aside>
@@ -200,6 +220,57 @@
     </div>
   </div>
 
+
+  <div id="storePopup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 hidden">
+  <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md animate-fade-in relative">
+    <h3 class="text-xl font-bold text-lime-700 mb-4">➕ إضافة / صرف</h3>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">📅 التاريخ</label>
+        <input type="date" id="popupDate" class="input-style" required />
+      </div>
+      <div>
+  <label class="block text-sm text-gray-600 mb-1">👷 اسم الفني</label>
+  <input type="text" id="popupTechnician" class="input-style" placeholder="اكتب اسم الفني" required />
+</div>
+
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">🏢 المكتب</label>
+        <select id="popupOffice" class="input-style" required>
+          <option value="">اختر المكتب</option>
+          <option value="شبرا">شبرا</option>
+          <option value="المهندسين">المهندسين</option>
+          <option value="جسر السويس">جسر السويس</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">🔢 الكمية</label>
+        <input type="number" id="popupQty" class="input-style" placeholder="اكتب الكمية باللتر" required />
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">🔄 نوع العملية</label>
+        <select id="popupType" class="input-style" onchange="updatePopupButton()">
+          <option value="إضافة">إضافة</option>
+          <option value="صرف">صرف</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">🆔 الرقم التسلسلي</label>
+        <input type="text" id="popupSerial" class="input-style" placeholder="اكتب السيريال" />
+      </div>
+    </div>
+
+    <div class="flex justify-between mt-6">
+      <button onclick="submitStoreEntry()" id="popupSubmitBtn" class="bg-lime-700 text-white px-4 py-2 rounded hover:bg-lime-800">
+        تنفيذ الإضافة
+      </button>
+      <button onclick="closeStorePopup()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+
   <!-- سكريبت الصفحة -->
   <script>
     lucide.createIcons();
@@ -253,6 +324,14 @@
          <i data-lucide="refresh-ccw" class="w-4 h-4"></i>
           <span>تحديث البيانات</span>
         </button>
+
+        <button onclick="exportHousingToExcel()" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 flex items-center gap-2">
+  <i data-lucide="download" class="w-4 h-4"></i>
+  <span>تحميل البيانات</span>
+</button>
+
+
+
         <button onclick="showHousingStats()"
         class="bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700 flex items-center gap-2">
   <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
@@ -264,14 +343,17 @@
       <table class="min-w-full bg-white text-center border border-gray-200">
         <thead id="housingTableHead" class="bg-green-100 text-green-800 font-bold">
           <tr>
-              <th class="px-4 py-2 border">الوقت و التاريخ</th>
-              <th class="px-4 py-2 border">نوع التسكين</th>
-              <th class="px-4 py-2 border">أسم الفني</th>
-              <th class="px-4 py-2 border">المكتب</th>
-              <th class="px-4 py-2 border">رقم الهوندا</th>
-              <th class="px-4 py-2 border">رقم الموقع</th>
-              <th class="px-4 py-2 border">سبب التسكين</th>
-              <th class="px-4 py-2 border">ترانسميشن فقط </th>
+              <th class="px-4 py-2 border">Resource Name</th>
+              <th class="px-4 py-2 border">PG S.N.</th>
+              <th class="px-4 py-2 border">Category</th>
+              <th class="px-4 py-2 border">Office</th>
+              <th class="px-4 py-2 border">Site ID</th>
+              <th class="px-4 py-2 border">Date in</th>
+              <th class="px-4 py-2 border">Time in</th>
+              <th class="px-4 py-2 border">Date out</th>
+               <th class="px-4 py-2 border">Time out</th>
+                 <th class="px-4 py-2 border">TT</th>
+                  <th class="px-4 py-2 border">Fuel spear</th>
             </tr>
           </thead>
         <tbody id="housingTableBody"></tbody>
@@ -303,8 +385,22 @@
 
         <div class="bg-white p-4 rounded-xl shadow border text-indigo-700">
           <div class="text-3xl font-bold" id="housingCount">--</div>
-          <div class="mt-2">🏠 حالات التسكين النشطة</div>
+          <div class="mt-2">🏠 عدد حالات التسكين </div>
         </div>
+        <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
+  <div>
+    <h3 class="text-sm font-medium text-gray-500">حالات التسكين النشطة</h3>
+    <p id="openHousingCount" class="text-xl font-semibold text-gray-800 mt-1">--</p>
+    <ul id="openHousingList" class="mt-2 text-xs text-gray-600 space-y-1"></ul>
+  </div>
+  <div class="text-green-500 bg-green-100 p-2 rounded-full">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h6v6m2 4H7a2 2 0 01-2-2V7a2 2 0 012-2h5l2 2h5a2 2 0 012 2v10a2 2 0 01-2 2z" />
+    </svg>
+  </div>
+</div>
+
+
         <div class="bg-white p-4 rounded-xl shadow border text-gray-700">
           <div class="text-xl font-semibold" id="lastUpdate">--</div>
           <div class="mt-2">🕒 آخر تحديث</div>
@@ -428,7 +524,90 @@
   `;
         lucide.createIcons();
         fetchEmployeeData();
-      }
+      } else if (section === "pgRoster") {
+        const main = document.getElementById("mainContent");
+        const today = new Date();
+        const dateStr = today.toISOString().split("T")[0];
+        const weekdayName = today.toLocaleDateString("ar-EG", {
+          weekday: "long",
+        });
+
+        main.innerHTML = `
+    <h2 class="text-2xl font-bold text-pink-700 mb-6 text-center">📋 PG Roster</h2>
+    <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+      <button onclick="showPgRosterCar()" class="bg-blue-600 text-white p-6 rounded-xl shadow hover:bg-blue-700 text-center w-60">
+        <div class="text-lg font-bold mb-2">🚗 PG Roster Car</div>
+        <div class="text-sm text-white/80">${dateStr}</div>
+      </button>
+      
+    </div>
+    <div id="pgRosterWrapper" class="mt-10 relative hidden">
+  <!-- أزرار النسخ والإغلاق -->
+  <div class="absolute top-2 left-2 flex gap-2 z-10">
+    <button onclick="copyPgRosterText()"
+      class="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded flex items-center gap-1 shadow">
+      <i data-lucide="copy" class="w-4 h-4"></i> نسخ
+    </button>
+    <button onclick="hidePgRosterOutput()"
+      class="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded flex items-center gap-1 shadow">
+      <i data-lucide="x" class="w-4 h-4"></i> إغلاق
+    </button>
+  </div>
+
+  <!-- محتوى النص -->
+  <div id="pgRosterOutput"
+    class="whitespace-pre-wrap font-mono text-sm bg-gray-100 p-4 pt-14 rounded-xl shadow text-gray-800">
+    <!-- بيتم ملؤه ديناميكيًا -->
+  </div>
+</div>
+
+</div>
+
+
+  `;
+        lucide.createIcons();
+      }  else if (section === "store") {
+  main.innerHTML = `
+  <h2 class="text-2xl font-bold text-lime-700 mb-6">📦 المخزن</h2>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <button onclick="openStorePopup()" class="bg-lime-700 hover:bg-lime-800 text-white px-6 py-2 rounded shadow">
+      ➕ إضافة / صرف جديد
+    </button>
+
+    <div class="flex flex-wrap gap-4 text-sm">
+      <span class="bg-white border px-4 py-2 rounded shadow">🏢 شبرا: <strong id="balanceShubra">--</strong> لتر</span>
+      <span class="bg-white border px-4 py-2 rounded shadow">🏢 المهندسين: <strong id="balanceMohandessin">--</strong> لتر</span>
+      <span class="bg-white border px-4 py-2 rounded shadow">🏢 جسر السويس: <strong id="balanceGesr">--</strong> لتر</span>
+    </div>
+  </div>
+
+  <div id="storeTableWrapper" class="overflow-x-auto bg-white border rounded shadow">
+    <table class="min-w-full text-center">
+      <thead class="bg-lime-100 text-lime-800">
+  <tr>
+    <th class="px-4 py-2 border">📅 التاريخ</th>
+    <th class="px-4 py-2 border">👷 اسم الفني</th> <!-- ✅ العمود الجديد -->
+    <th class="px-4 py-2 border">🏢 المكتب</th>
+    <th class="px-4 py-2 border">🔢 الكمية</th>
+    <th class="px-4 py-2 border">🔄 نوع العملية</th>
+    <th class="px-4 py-2 border">🆔 الرقم التسلسلي</th>
+    <th class="px-4 py-2 border">📥 الإضافة</th>
+    <th class="px-4 py-2 border">📤 الصرف</th>
+  </tr>
+</thead>
+
+      <tbody id="storeTableBody">
+        <!-- هيتملأ ديناميكيًا -->
+      </tbody>
+    </table>
+  </div>
+`;
+lucide.createIcons();
+fetchStoreData(); // تحميل البيانات من الشيت لما نكمل لاحقًا
+
+}
+
     }
     function filterBySiteID() {
       const input = document
@@ -517,40 +696,83 @@
     function fetchHousingData() {
       const overlay = document.getElementById("loaderOverlay");
       const countdownText = document.getElementById("countdown");
-      overlay.classList.remove("hidden");
 
+      overlay.classList.remove("hidden");
       let seconds = 0;
       countdownText.textContent = seconds;
       const timer = setInterval(() => {
         seconds++;
         countdownText.textContent = seconds;
       }, 1000);
+
       fetch(
         "https://script.google.com/macros/s/AKfycbxoeOxRbxrbvYiqS_gtvYJuPMDasV3rbFyg-GyZhR5Scdj30OGhU6wq1jDtfMnWV9G7ig/exec"
       )
         .then((res) => res.json())
         .then((data) => {
+          const grouped = {};
+
+          data.forEach((row) => {
+            const name = row["Resource Name"]?.trim();
+            const site = row["Site ID"]?.trim();
+            const sn = row["PG S.N."]?.trim();
+            const type = row["نوع التسكين"]?.trim();
+            const date = row["Date"];
+            const time = row["Time "] || "";
+            const key = `${name}_${site}_${sn}`;
+
+            if (!grouped[key]) {
+              grouped[key] = {
+                name,
+                sn,
+                category: row["Category"],
+                office: row["Office"],
+                site,
+                fuel: row["Fuel spear"],
+                tt: row["Transmission Only"],
+                dateIn: "",
+                timeIn: "",
+                dateOut: "",
+                timeOut: "",
+              };
+            }
+
+            if (type.includes("بداية")) {
+              grouped[key].dateIn = date;
+              grouped[key].timeIn = time;
+            } else if (type.includes("نهاية")) {
+              grouped[key].dateOut = date;
+              grouped[key].timeOut = time;
+            }
+          });
+
           const tableBody = document.getElementById("housingTableBody");
           tableBody.innerHTML = "";
 
-          data.forEach((row) => {
-            console.log("🕓 RAW Date & Time", row["Date"], "|", row["Time "]);
+          Object.values(grouped).forEach((item) => {
+            let hours = "";
+            try {
+              const start = new Date(`${item.dateIn}T${item.timeIn}`);
+              const end = new Date(`${item.dateOut}T${item.timeOut}`);
+              const diff = (end - start) / 1000 / 3600;
+              if (diff > 0 && diff < 24) hours = diff.toFixed(2);
+            } catch { }
 
             const tr = document.createElement("tr");
             tr.className = "text-center hover:bg-gray-100 transition";
             tr.innerHTML = `
-  <td class="px-4 py-2 border">${formatCustomDateTimeISO(
-              row["Date"],
-              row["Time "]
-            )}</td>
-  <td class="px-4 py-2 border">${row["نوع التسكين"] || ""}</td>
-  <td class="px-4 py-2 border">${row["Resource Name"] || ""}</td>
-  <td class="px-4 py-2 border">${row["Office"] || ""}</td>
-  <td class="px-4 py-2 border">${row["PG S.N."] || ""}</td>
-  <td class="px-4 py-2 border">${row["Site ID"] || ""}</td>
-  <td class="px-4 py-2 border">${row["Category"] || ""}</td>
-  <td class="px-4 py-2 border">${row["Fuel spear"] || ""}</td>
-`;
+          <td class="px-4 py-2 border">${item.name || ""}</td>
+          <td class="px-4 py-2 border">${item.sn || ""}</td>
+          <td class="px-4 py-2 border">${item.category || ""}</td>
+          <td class="px-4 py-2 border">${item.office || ""}</td>
+          <td class="px-4 py-2 border">${item.site || ""}</td>
+          <td class="px-4 py-2 border">${formatDateOnly(item.dateIn)}</td>
+          <td class="px-4 py-2 border">${extractTimeOnly(item.timeIn)}</td>
+          <td class="px-4 py-2 border">${formatDateOnly(item.dateOut)}</td>
+          <td class="px-4 py-2 border">${extractTimeOnly(item.timeOut)}</td>
+          <td class="px-4 py-2 border">${item.tt || ""}</td>
+          <td class="px-4 py-2 border">${item.fuel || ""}</td>
+        `;
             tableBody.appendChild(tr);
           });
         })
@@ -563,6 +785,7 @@
           overlay.classList.add("hidden");
         });
     }
+
     function formatDateTime(dateStr) {
       if (!dateStr) return "";
       const date = new Date(dateStr);
@@ -588,9 +811,9 @@
       // جدول التسكين
       const housingRows = document.querySelectorAll("#housingTableBody tr");
       housingRows.forEach((row) => {
-        const name = row.querySelector("td:nth-child(3)")?.textContent || "";
+        const name = row.querySelector("td:nth-child(1)")?.textContent || "";
         const siteID =
-          row.querySelector("td:nth-child(6)")?.textContent || "";
+          row.querySelector("td:nth-child(5)")?.textContent || "";
         const date = row.querySelector("td:nth-child(7)")?.textContent || "";
         let show = true;
         if (searchName && !name.includes(searchName)) show = false;
@@ -709,7 +932,7 @@
       const rows = document.querySelectorAll("#employeeTableBody tr");
 
       rows.forEach((row) => {
-        const nameCell = row.querySelector("td:first-child");
+        const nameCell = row.querySelector("td:nth-child(2)");
         const nameText = nameCell?.textContent.toLowerCase() || "";
         row.style.display = nameText.includes(input) ? "" : "none";
       });
@@ -765,41 +988,6 @@
 
           // رسم بياني
           const ctx = document.getElementById("statsChart").getContext("2d");
-          // 🕒 توزيع حسب مدة العمل
-const today = new Date();
-const experienceGroups = { "جديد": 0, "متوسط": 0, "خبير": 0 };
-
-data.forEach((emp) => {
-  const hireDate = new Date(emp["hireDate"]);
-  if (!isNaN(hireDate)) {
-    const years = (today - hireDate) / (1000 * 60 * 60 * 24 * 365.25);
-    if (years < 1) experienceGroups["جديد"]++;
-    else if (years < 3) experienceGroups["متوسط"]++;
-    else experienceGroups["خبير"]++;
-  }
-});
-
-// إنشاء عنصر رسم جديد وتحميله
-const expCanvas = document.createElement("canvas");
-expCanvas.id = "experienceChart";
-document.getElementById("statsContent").appendChild(expCanvas);
-
-new Chart(expCanvas, {
-  type: "bar",
-  data: {
-    labels: Object.keys(experienceGroups),
-    datasets: [{
-      label: "حسب مدة العمل",
-      data: Object.values(experienceGroups),
-      backgroundColor: ["#06b6d4", "#4f46e5", "#9333ea"]
-    }]
-  },
-  options: {
-    plugins: { legend: { display: false } },
-    responsive: true
-  }
-});
-
           if (window.statsChartInstance) window.statsChartInstance.destroy(); // مسح القديم
           window.statsChartInstance = new Chart(ctx, {
             type: "pie",
@@ -927,48 +1115,6 @@ new Chart(expCanvas, {
             options: { indexAxis: "y", responsive: true },
           });
 
-          // ❗ كشف التسكين غير المكتمل
-const incompleteList = [];
-
-for (const honda in usageTimes) {
-  const events = usageTimes[honda].sort((a, b) => a.time - b.time);
-
-  for (let i = 0; i < events.length; i++) {
-    const current = events[i];
-    const next = events[i + 1];
-
-    if (current.type === "بداية") {
-      if (!next || next.type !== "نهاية" || (next.time - current.time) > 24 * 3600 * 1000) {
-        incompleteList.push({
-          honda,
-          time: current.time.toLocaleString("ar-EG"),
-        });
-      }
-    }
-  }
-}
-
-// إنشاء جدول للتسكين غير المكتمل
-if (incompleteList.length > 0) {
-  const table = document.createElement("table");
-  table.className = "w-full mt-6 border border-red-400 text-red-700 bg-red-50 text-sm rounded overflow-hidden";
-  table.innerHTML = `
-    <thead class="bg-red-100">
-      <tr><th class="px-2 py-1 border">رقم الهوندا</th><th class="px-2 py-1 border">وقت البداية</th></tr>
-    </thead>
-    <tbody>
-      ${incompleteList.map(i => `
-        <tr>
-          <td class="px-2 py-1 border">${i.honda}</td>
-          <td class="px-2 py-1 border">${i.time}</td>
-        </tr>
-      `).join("")}
-    </tbody>
-  `;
-  document.getElementById("housingStatsContent").appendChild(table);
-}
-
-
           // حساب ساعات تشغيل الهوندا
           let totalHours = 0;
           for (const honda in usageTimes) {
@@ -1003,6 +1149,8 @@ if (incompleteList.length > 0) {
       });
     }
 
+    // ✅ دالة إحصائيات الصفحة الرئيسية
+
     function loadHomeStats() {
       Promise.all([
         fetch(
@@ -1012,58 +1160,109 @@ if (incompleteList.length > 0) {
           "https://script.google.com/macros/s/AKfycbxoeOxRbxrbvYiqS_gtvYJuPMDasV3rbFyg-GyZhR5Scdj30OGhU6wq1jDtfMnWV9G7ig/exec"
         ).then((res) => res.json()),
       ]).then(([employees, housing]) => {
-        // ✅ الكروت
         document.getElementById("employeeCount").textContent =
           employees.length;
-        document.getElementById("housingCount").textContent = housing.length;
         document.getElementById("lastUpdate").textContent =
           new Date().toLocaleString("ar-EG");
 
-        const targetOffices = ["شبرا", "جسر السويس", "المهندسين"];
-        const officeList = document.getElementById("officeList");
+        const realHousings = {};
+        const hondaUsage = {};
+        const siteUsage = {};
+        const officeUsage = {};
+        const openHousings = {}; // 🔄 حالات التسكين المفتوحة فقط
 
-        officeList.innerHTML = targetOffices
-          .map((office) => {
-            const count = employees.filter(
-              (emp) => emp["office"] === office
-            ).length;
-            return `<li>• ${office}: ${count} موظف</li>`;
-          })
-          .join("");
-
-        // ✅ الرسم البياني للهوندا
-        const hondaCount = {};
         housing.forEach((row) => {
+          const name = row["Resource Name"];
+          const site = row["Site ID"];
           const honda = row["PG S.N."]?.trim();
-          if (honda) hondaCount[honda] = (hondaCount[honda] || 0) + 1;
-        });
-        const hondaLabels = Object.keys(hondaCount);
-        const hondaData = Object.values(hondaCount);
+          const office = row["Office"]?.trim();
 
+          let typeRaw = row["نوع التسكين"]?.trim() || "";
+          let type = "";
+          if (typeRaw.includes("بداية")) type = "بداية";
+          else if (typeRaw.includes("نهاية")) type = "نهاية";
+
+          const datetime = new Date(
+            `${row["Date"]}T${row["Time "] || "00:00"}`
+          );
+
+          const key = `${name}_${site}`;
+          if (!realHousings[key]) realHousings[key] = [];
+          realHousings[key].push(type);
+
+          if (honda && type) {
+            if (!hondaUsage[honda]) hondaUsage[honda] = [];
+            hondaUsage[honda].push({ type, time: datetime });
+          }
+
+          if (site && type) {
+            if (!siteUsage[site]) siteUsage[site] = [];
+            siteUsage[site].push(type);
+          }
+
+          if (office && type) {
+            if (!officeUsage[office]) officeUsage[office] = [];
+            officeUsage[office].push(type);
+          }
+
+          // ✅ تجميع التسكينات المفتوحة
+          if (!openHousings[key]) openHousings[key] = [];
+          openHousings[key].push({ name, site, type });
+        });
+
+        const getRealCount = (arr) => Math.floor((arr?.length || 0) / 2);
+
+        const housingCount = Object.values(realHousings).reduce(
+          (sum, arr) => sum + getRealCount(arr),
+          0
+        );
+        document.getElementById("housingCount").textContent = housingCount;
+
+        // ✅ تصفية التسكينات المفتوحة فقط
+        const stillOpen = Object.values(openHousings)
+          .filter((arr) => {
+            const starts = arr.filter((e) => e.type === "بداية").length;
+            const ends = arr.filter((e) => e.type === "نهاية").length;
+            return starts > ends;
+          })
+          .map((arr) => arr.find((e) => e.type === "بداية"));
+
+        // 🖊️ عرض عدد التسكينات المفتوحة
+        const openCountDiv = document.getElementById("openHousingCount");
+        const openListDiv = document.getElementById("openHousingList");
+
+        if (openCountDiv && openListDiv) {
+          openCountDiv.textContent = `إجمالي التسكينات المفتوحة: ${stillOpen.length}`;
+          openListDiv.innerHTML = stillOpen
+            .map((e) => `<li>• ${e.site} - ${e.name}</li>`)
+            .join("");
+        }
+
+        // 📊 رسم بياني استخدام الهوندا
+        const hondaLabels = Object.keys(hondaUsage);
+        const hondaData = hondaLabels.map((key) =>
+          getRealCount(hondaUsage[key])
+        );
         new Chart(document.getElementById("homeHondaChart"), {
           type: "bar",
           data: {
             labels: hondaLabels,
             datasets: [
               {
-                label: "عدد مرات الاستخدام",
+                label: "مرات التشغيل",
                 data: hondaData,
-                backgroundColor: "#14b8a6",
+                backgroundColor: "#10B981",
               },
             ],
           },
           options: { responsive: true, indexAxis: "y" },
         });
 
-        // ✅ الرسم البياني للمكاتب
-        const officeCount = {};
-        housing.forEach((row) => {
-          const office = row["Office"]?.trim();
-          if (office) officeCount[office] = (officeCount[office] || 0) + 1;
-        });
-        const officeLabels = Object.keys(officeCount);
-        const officeData = Object.values(officeCount);
-
+        // 📊 رسم بياني توزيع المكاتب
+        const officeLabels = Object.keys(officeUsage);
+        const officeData = officeLabels.map((key) =>
+          getRealCount(officeUsage[key])
+        );
         new Chart(document.getElementById("homeOfficeChart"), {
           type: "pie",
           data: {
@@ -1079,7 +1278,7 @@ if (incompleteList.length > 0) {
           },
         });
 
-        // ✅ الرسم البياني للوظائف
+        // 📊 توزيع الوظائف
         const jobCount = {};
         employees.forEach((emp) => {
           const job = emp["jobTitle"]?.trim();
@@ -1087,7 +1286,6 @@ if (incompleteList.length > 0) {
         });
         const jobLabels = Object.keys(jobCount);
         const jobData = Object.values(jobCount);
-
         new Chart(document.getElementById("homeJobChart"), {
           type: "bar",
           data: {
@@ -1102,8 +1300,374 @@ if (incompleteList.length > 0) {
           },
           options: { responsive: true },
         });
+
+        // 📌 توزيع حسب المكاتب الجانبية
+        const officeList = document.getElementById("officeList");
+        officeList.innerHTML = ["شبرا", "جسر السويس", "المهندسين"]
+          .map((office) => {
+            const count = employees.filter(
+              (emp) => emp["office"] === office
+            ).length;
+            return `<li>• ${office}: ${count} موظف</li>`;
+          })
+          .join("");
+        // 🔍 تحليل أكثر السيتات تسكينًا حسب المكتب
+        const siteOfficeCount = {};
+        housing.forEach((row) => {
+          const site = row["Site ID"]?.trim();
+          const office = row["Office"]?.trim();
+          const typeRaw = row["نوع التسكين"]?.trim();
+          const type = typeRaw?.includes("بداية")
+            ? "بداية"
+            : typeRaw?.includes("نهاية")
+              ? "نهاية"
+              : "";
+
+          if (site && office && type === "بداية") {
+            const key = `${site}__${office}`;
+            siteOfficeCount[key] = (siteOfficeCount[key] || 0) + 1;
+          }
+        });
+
+        const sortedSites = Object.entries(siteOfficeCount)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+
+        const siteTable = `
+  <h3 class="font-bold text-gray-700 mb-2">🏗️ أكثر السيتات تسكينًا</h3>
+  <table class="w-full text-sm border border-gray-300 rounded overflow-hidden">
+    <thead class="bg-gray-100 text-gray-700">
+      <tr>
+        <th class="px-3 py-2 border">Site</th>
+        <th class="px-3 py-2 border">المكتب</th>
+        <th class="px-3 py-2 border">عدد التسكينات</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${sortedSites
+            .map(([key, count]) => {
+              const [site, office] = key.split("__");
+              return `<tr>
+            <td class="px-3 py-2 border">${site}</td>
+            <td class="px-3 py-2 border">${office}</td>
+            <td class="px-3 py-2 border">${count}</td>
+          </tr>`;
+            })
+            .join("")}
+    </tbody>
+  </table>
+`;
+
+        const container = document.createElement("div");
+        container.className = "bg-white p-4 rounded-xl shadow border mt-6";
+        container.innerHTML = siteTable;
+        document.querySelector("main #mainContent")?.appendChild(container);
       });
     }
+
+    // ✅ تشغيل الصفحة الرئيسية تلقائيًا أول ما الصفحة تفتح
+    window.addEventListener("DOMContentLoaded", () => {
+      loadContent("home");
+    });
+
+    // ✅ تحديث تلقائي كل 20 ثانية لو المستخدم واقف على الصفحة الرئيسية
+    setInterval(() => {
+      const h2 = document.querySelector("#mainContent h2")?.textContent || "";
+      if (h2.includes("👋") || h2.includes("الصفحة الرئيسية")) {
+        console.log("✅ تم التحديث التلقائي");
+        loadHomeStats();
+      }
+    }, 20000);
+
+    function extractTimeOnly(dateTimeStr) {
+      if (!dateTimeStr) return "";
+      try {
+        const date = new Date(dateTimeStr);
+        return date.toLocaleTimeString("ar-EG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      } catch {
+        return dateTimeStr;
+      }
+    }
+
+    function exportHousingToExcel() {
+      const table = document
+        .querySelector("#housingTableBody")
+        .closest("table");
+      const rows = Array.from(table.querySelectorAll("tr"));
+
+      let csvContent = "\uFEFF"; // BOM for UTF-8 لتدعم العربي
+      rows.forEach((row) => {
+        const cells = Array.from(row.querySelectorAll("th, td")).map(
+          (cell) => `="${cell.innerText.trim()}"`
+        );
+        csvContent += cells.join(",") + "\n";
+      });
+
+      const blob = new Blob([csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "housing-data.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function showPgRosterCar() {
+      const today = new Date();
+      const day = today.getDay(); // 0 = الأحد
+      const dateStr = today.toISOString().split("T")[0];
+      const weekdays = [
+        "الأحد",
+        "الاثنين",
+        "الثلاثاء",
+        "الأربعاء",
+        "الخميس",
+        "الجمعة",
+        "السبت",
+      ];
+      const todayName = weekdays[day];
+
+      const drivers = [
+        { name: "عبد المقصود", off: 1, office: "جسر السويس" },
+        { name: "محمد حسين", off: 3, office: "جسر السويس" },
+        { name: "محمد بيان", off: 6, office: "جسر السويس" },
+        { name: "ابراهيم حسني", off: 4, office: "شبرا" },
+        { name: "محمد عبده", off: 5, office: "شبرا" },
+        { name: "احمد عزت", off: 3, office: "شبرا" },
+        { name: "احمد على", off: 2, office: "شبرا" },
+        { name: "هانى ريان", off: 1, office: "شبرا" },
+        { name: "ايمن جمال", off: 6, office: "المهندسين" },
+        { name: "سيد جاد", off: 0, office: "المهندسين" },
+      ];
+
+      const activeDrivers = drivers.filter((d) => d.off !== day);
+
+      const offices = {
+        المهندسين: [],
+        شبرا: [],
+        "جسر السويس": [],
+      };
+
+      activeDrivers.forEach((d) => {
+        if (offices[d.office]) {
+          offices[d.office].push(d.name);
+        }
+      });
+
+      const renderSection = (office, names) => `
+${office}
+
+◻شفت الصبح◻
+
+${names.join("\n")}
+
+◼ شفت الليل ◼
+
+${names.join("\n")}
+ــــــــــــــــــــــــــــــــــــــــــــــــــــــــــ`;
+
+      const fullText = `
+PG Cars Roster
+
+◻ شغل ${todayName} - ${dateStr}
+
+${renderSection("مكتب المهندسين", offices["المهندسين"])}
+${renderSection("مكتب شبرا", offices["شبرا"])}
+${renderSection("مكتب الجسر", offices["جسر السويس"])}
+
+🔻🔺🔻🔺🔻🔺🔻🔺🔻🔺
+`;
+
+      const output = document.getElementById("pgRosterOutput");
+      document.getElementById("pgRosterWrapper").classList.remove("hidden");
+      document.getElementById("pgRosterOutput").innerText = fullText;
+      lucide.createIcons(); // علشان تظهر الأيقونات بعد إدخالها ديناميكيًا
+    }
+
+    function copyPgRosterText() {
+      const text = document.getElementById("pgRosterOutput")?.innerText || "";
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "تم النسخ",
+            text: "تم نسخ قائمة السائقين!",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        });
+      }
+    }
+
+    function hidePgRosterOutput() {
+      document.getElementById("pgRosterWrapper").classList.add("hidden");
+    }
+
+    function submitStoreForm(event) {
+      event.preventDefault();
+      const date = document.getElementById("storeDate").value;
+      const office = document.getElementById("storeOffice").value.trim();
+      const qty = document.getElementById("storeQty").value.trim();
+      const serial = document.getElementById("storeSerial").value.trim();
+
+      const payload = {
+        date,
+        office,
+        qty,
+        serial,
+      };
+
+      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_URL_HERE/exec", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          Swal.fire({
+            icon: "success",
+            title: "✅ تم الإرسال",
+            text: "تم إضافة بيانات المنتج بنجاح",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          document.getElementById("storeDate").value = "";
+          document.getElementById("storeOffice").value = "";
+          document.getElementById("storeQty").value = "";
+          document.getElementById("storeSerial").value = "";
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: "❌ خطأ",
+            text: "حدث خطأ أثناء إرسال البيانات",
+          });
+          console.error(err);
+        });
+    }
+
+
+    function openStorePopup() {
+  document.getElementById("storePopup").classList.remove("hidden");
+  document.getElementById("popupType").value = "إضافة";
+  updatePopupButton();
+}
+
+function closeStorePopup() {
+  document.getElementById("storePopup").classList.add("hidden");
+}
+
+function updatePopupButton() {
+  const type = document.getElementById("popupType").value;
+  const btn = document.getElementById("popupSubmitBtn");
+  btn.textContent = type === "صرف" ? "تنفيذ الصرف" : "تنفيذ الإضافة";
+}
+
+// ⚠️ هذه الدالة سترسل البيانات لاحقًا إلى Google Sheet (سنكملها في الخطوة القادمة)
+function submitStoreEntry() {
+  const date = document.getElementById("popupDate").value;
+  const technician = document.getElementById("popupTechnician").value.trim();
+  const office = document.getElementById("popupOffice").value;
+  const qty = parseFloat(document.getElementById("popupQty").value || 0);
+  const type = document.getElementById("popupType").value;
+  const serial = document.getElementById("popupSerial").value;
+
+  if (!date || !technician || !office || !qty || qty <= 0) {
+    Swal.fire("⚠️ تأكد من إدخال جميع البيانات بشكل صحيح.");
+    return;
+  }
+
+  const row = {
+    date,
+    technician, // ✅ تم الإضافة
+    office,
+    qty,
+    type,
+    serial,
+    addition: type === "إضافة" ? qty : "",
+    withdrawal: type === "صرف" ? qty : ""
+  };
+
+  console.log("🚀 بيانات جاهزة للإرسال:", row);
+
+  fetch("https://script.google.com/macros/s/AKfycbw5DZxZYQF-GZ_i3Y7xpazQOtmgVTQTQYohj8Yx5o1lb0Q_zoOYsiSUe-sklkddz4BkWQ/exec", {
+  method: "POST",
+  body: JSON.stringify(row),
+  headers: { "Content-Type": "application/json" }
+})
+  .then(res => res.json())
+  .then(res => {
+    if (res.success) {
+      Swal.fire("✅ تم الإرسال بنجاح");
+      closeStorePopup();
+      fetchStoreData(); // لإعادة تحميل الجدول وتحديث الأرصدة
+    } else {
+      throw new Error(res.error || "حدث خطأ");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    Swal.fire("❌ حدث خطأ أثناء الإرسال");
+  });
+
+  closeStorePopup();
+}
+
+function fetchStoreData() {
+  fetch("https://script.google.com/macros/s/AKfycbw5DZxZYQF-GZ_i3Y7xpazQOtmgVTQTQYohj8Yx5o1lb0Q_zoOYsiSUe-sklkddz4BkWQ/exec")
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById("storeTableBody");
+      tbody.innerHTML = "";
+
+      const balances = {
+        "شبرا": 0,
+        "المهندسين": 0,
+        "جسر السويس": 0
+      };
+
+      data.forEach(row => {
+        const addition = parseFloat(row["الإضافة"] || 0);
+        const withdrawal = parseFloat(row["الصرف"] || 0);
+        const office = row["المكتب"];
+
+        if (balances.hasOwnProperty(office)) {
+          balances[office] += addition - withdrawal;
+        }
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-gray-50";
+        tr.innerHTML = `
+          <td class="px-4 py-2 border">${row["التاريخ"]}</td>
+          <td class="px-4 py-2 border">${row["اسم الفني"]}</td>
+          <td class="px-4 py-2 border">${office}</td>
+          <td class="px-4 py-2 border">${row["الكمية"]}</td>
+          <td class="px-4 py-2 border">${row["نوع العملية"]}</td>
+          <td class="px-4 py-2 border">${row["الرقم التسلسلي"]}</td>
+          <td class="px-4 py-2 border">${row["الإضافة"] || ""}</td>
+          <td class="px-4 py-2 border">${row["الصرف"] || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // تحديث الأرصدة
+      document.getElementById("balanceShubra").textContent = balances["شبرا"];
+      document.getElementById("balanceMohandessin").textContent = balances["المهندسين"];
+      document.getElementById("balanceGesr").textContent = balances["جسر السويس"];
+    })
+    .catch(err => {
+      console.error("❌ خطأ أثناء تحميل البيانات:", err);
+      Swal.fire("⚠️ لم يتم تحميل بيانات المخزن");
+    });
+}
+
+
   </script>
 </body>
 
