@@ -1,248 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
     <title>Document</title>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <button class="toggle-menu">
-    <i class="fas fa-bars"></i>
-</button>
-
-
+      <i class="fas fa-bars"></i>
+    </button>
 
     <div class="menu">
-        <ul>
-            <li class="profile">
-                <div class="img-box">
-                    <img src="1.jpg" alt="profile">
-                </div>
-                <h2>mohamed esam</h2>
-            </li>
-            
-            <li>
-                <a class="active" href="">
-                    <i class="fas fa-home"></i>
-                    <p>Dashboard</p>
-                </a>
-            </li>
-            <li>
-    <a href="#" id="attendanceBtn">
-        <i class="fas fa-clock"></i>
-        <p>ِِِِAttendance</p>
-    </a>
-</li>
+        <button class="close-menu" id="closeSidebarBtn">×</button>
 
-            <li>
-                <a href="">
-                   <i class="fas fa-bell"></i>
-                    <p>Leave requests</p>
-                </a>
-            </li>
-             <li>
-                <a href="">
-                    <i class="fas fa-table"></i>
-                    <p>Honda start</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <i class="fas fa-chart-pie"></i>
-                    <p>Charts</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <i class="fas fa-warehouse"></i>
-                    <p>Posts</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <i class="fas fa-user-plus"></i>
-                    <p>Favorite</p>
-                </a>
-            </li>
-            <li>
-                <a href="">
-                    <i class="fas fa-address-card"></i>
-                    <p>Settings</p>
-                </a>
-            </li>
-            <li class="log-out">
-                <a href="">
-                    <i class="fas fa-sign-out"></i>
-                    <p>Log Out</p>
-                </a>
-            </li>
-        </ul>
+      <ul>
+        <li class="profile">
+          <div class="img-box">
+            <img src="1.jpg" alt="profile" />
+          </div>
+          <h2>mohamed esam</h2>
+        </li>
+
+        <li>
+          <a class="active" href="">
+            <i class="fas fa-home"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+        <li>
+          <a href="#" id="attendanceBtn">
+            <i class="fas fa-clock"></i>
+            <p>ِِِِAttendance</p>
+          </a>
+        </li>
+
+        <li>
+          <a href="">
+            <i class="fas fa-bell"></i>
+            <p>Leave requests</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <i class="fas fa-table"></i>
+            <p>Honda start</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <i class="fas fa-chart-pie"></i>
+            <p>Charts</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <i class="fas fa-warehouse"></i>
+            <p>Posts</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <i class="fas fa-user-plus"></i>
+            <p>Favorite</p>
+          </a>
+        </li>
+        <li>
+          <a href="">
+            <i class="fas fa-address-card"></i>
+            <p>Settings</p>
+          </a>
+        </li>
+        <li class="log-out">
+          <a href="">
+            <i class="fas fa-sign-out"></i>
+            <p>Log Out</p>
+          </a>
+        </li>
+      </ul>
     </div>
 
     <div class="content">
-        <div class="title-inffo">
-            <p>Dashboard</p>
-            <i class="fas fa-chart-bar"></i>
+      <div class="title-inffo">
+        <p>Dashboard</p>
+        <i class="fas fa-chart-bar"></i>
+      </div>
+
+      <div class="data-info">
+        <div class="box">
+          <i class="fas fa-user-group"></i>
+          <div class="data">
+            <p>User</p>
+            <span>100</span>
+            <h5>DownTown = 10</h5>
+            <h5>Gesr elsuiz = 9</h5>
+            <h5>Mohandsen = 6</h5>
+          </div>
         </div>
-
-        <div class="data-info">
-            <div class="box">
-                <i class="fas fa-user-group"></i>
-                <div class="data">
-                    <p>User</p>
-                    <span>100</span>
-                    <h5>DownTown = 10</h5>
-                    <h5>Gesr elsuiz = 9</h5>
-                    <h5>Mohandsen = 6</h5>
-                </div>
-
-            </div>
-            <div class="box">
-                <i class="fas fa-dollar"></i>
-                <div class="data">
-                    <p>Revenue</p>
-                    <span>$126</span>
-                </div>
-
-            </div>
-            <div class="box">
-                <i class="fas fa-pen"></i>
-                <div class="data">
-                    <p>Posts</p>
-                    <span>765</span>
-                </div>
-
-            </div>
-            <div class="box">
-                <i class="fas fa-table"></i>
-                <div class="data">
-                    <p>Products</p>
-                    <span>34</span>
-                </div>
-            </div>
+        <div class="box">
+          <i class="fas fa-dollar"></i>
+          <div class="data">
+            <p>Revenue</p>
+            <span>$126</span>
+          </div>
         </div>
-
-        <div class="title-inffo">
+        <div class="box">
+          <i class="fas fa-pen"></i>
+          <div class="data">
+            <p>Posts</p>
+            <span>765</span>
+          </div>
+        </div>
+        <div class="box">
+          <i class="fas fa-table"></i>
+          <div class="data">
             <p>Products</p>
-            <i class="fas fa-table"></i>
+            <span>34</span>
+          </div>
         </div>
+      </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Resource Name</th>
-                    <th>PG S.N.</th>
-                    <th>Category</th>
-                    <th>Office</th>
-                    <th>Site ID</th>
-                    <th>Date in</th>
-                    <th>Time in</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>mohamed ahmed</td>
-                    <td>D4</td>
-                    <td>Power cut</td>
-                    <td>DownTown</td>
-                    <td><span class="Site">CAI2904</span></td>
-                    <td><span class="Date">25-7-2025</span></td>
-                    <td><span class="Time">1:00 PM</span></td>
-                </tr>
-            </tbody>
-        </table>
+      <div class="title-inffo">
+        <p>Products</p>
+        <i class="fas fa-table"></i>
+      </div>
 
-
-
-    </div>
-
-
-    <div class="content" id="attendanceSection" style="display: none;">
-    <div class="title-inffo">
-        <p>ِِِِAttendance</p>
-        <i class="fas fa-clock"></i>
-    </div>
-
-    <table id="attendanceTable">
+      <table>
         <thead>
-            <tr>
-                <th>Time - Date</th>
-                <th>Name</th>
-                <th>Office</th>
-                <th>Log in - log out</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Image link</th>
-            </tr>
+          <tr>
+            <th>Resource Name</th>
+            <th>PG S.N.</th>
+            <th>Category</th>
+            <th>Office</th>
+            <th>Site ID</th>
+            <th>Date in</th>
+            <th>Time in</th>
+          </tr>
         </thead>
         <tbody>
-            <!-- بيانات الحضور هتتحط هنا -->
+          <tr>
+            <td>mohamed ahmed</td>
+            <td>D4</td>
+            <td>Power cut</td>
+            <td>DownTown</td>
+            <td><span class="Site">CAI2904</span></td>
+            <td><span class="Date">25-7-2025</span></td>
+            <td><span class="Time">1:00 PM</span></td>
+          </tr>
         </tbody>
-    </table>
+      </table>
+    </div>
+
+    <div class="content" id="attendanceSection" style="display: none">
+      <div class="title-inffo">
+        <p>ِِِِAttendance</p>
+        <i class="fas fa-clock"></i>
+      </div>
+
+     <div class="table-wrapper">
+  <table id="attendanceTable">
+    <thead>
+      <tr>
+        <th>Time - Date</th>
+        <th>Name</th>
+        <th>Office</th>
+        <th>Log in - log out</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Image link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- بيانات الحضور هتتحط هنا -->
+    </tbody>
+  </table>
 </div>
 
+    </div>
 
     <script>
-    const toggleBtn = document.querySelector('.toggle-menu');
-    const menu = document.querySelector('.menu');
+      const toggleBtn = document.querySelector(".toggle-menu");
+      const menu = document.querySelector(".menu");
 
-    toggleBtn.addEventListener('click', () => {
-        menu.classList.toggle('show');
-    });
+      toggleBtn.addEventListener("click", () => {
+        menu.classList.toggle("show");
+      });
 
-        const attendanceBtn = document.getElementById('attendanceBtn');
-    const attendanceSection = document.getElementById('attendanceSection');
-    const dashboardContent = document.querySelector('.content'); // محتوى الـ Dashboard الأساسي
+      const attendanceBtn = document.getElementById("attendanceBtn");
+      const attendanceSection = document.getElementById("attendanceSection");
+      const dashboardContent = document.querySelector(".content"); // محتوى الـ Dashboard الأساسي
 
-    attendanceBtn.addEventListener('click', (e) => {
+      attendanceBtn.addEventListener("click", (e) => {
         e.preventDefault();
 
         // إخفاء كل المحتويات
-        document.querySelectorAll('.content').forEach(c => c.style.display = 'none');
+        document
+          .querySelectorAll(".content")
+          .forEach((c) => (c.style.display = "none"));
 
         // إظهار قسم الحضور
-        attendanceSection.style.display = 'block';
+        attendanceSection.style.display = "block";
 
         // تحميل البيانات
         fetchAttendanceData();
-    });
+      });
 
-    function fetchAttendanceData() {
-        fetch("https://script.google.com/macros/s/AKfycby5QdbFnpkhnBFkl5el6B2rflE1HcCHTMzV2hERMhbll4veiAESm4ElsQf7Bey3sDzUAQ/exec")
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.querySelector("#attendanceTable tbody");
-                tbody.innerHTML = ""; // امسح البيانات القديمة
+      function fetchAttendanceData() {
+        fetch(
+          "https://script.google.com/macros/s/AKfycby5QdbFnpkhnBFkl5el6B2rflE1HcCHTMzV2hERMhbll4veiAESm4ElsQf7Bey3sDzUAQ/exec"
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            const tbody = document.querySelector("#attendanceTable tbody");
+            tbody.innerHTML = "";
 
-                data.forEach(row => {
-                    // تأكد أن فيه بيانات كافية
-                    if (row.length < 7) return;
-
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${row[0]}</td>
-                        <td>${row[1]}</td>
-                        <td>${row[2]}</td>
-                        <td>${row[3]}</td>
-                        <td><span class="Site">${row[4]}</span></td>
-                        <td><span class="Date">${row[5]}</span></td>
-                        <td><span class="Time">${row[6]}</span></td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            })
-            .catch(err => {
-                console.error("حدث خطأ في جلب البيانات:", err);
+            data.forEach((row) => {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+          <td><span class="Time">${row["الوقت"] || "-"}</span></td>
+          <td>${row["الاسم"] || "-"}</td>
+          <td>${row["المكتب"] || "-"}</td>
+          <td>${row["الإجراء"] || "-"}</td>
+          <td>${row["خط العرض (Latitude)"] || "-"}</td>
+          <td>${row["خط الطول (Longitude)"] || "-"}</td>
+          <td><a href="${
+            row["الصورة (رابط)"]
+          }" target="_blank">عرض الصورة</a></td>
+        `;
+              tbody.appendChild(tr);
             });
+          })
+          .catch((err) => {
+            console.error("❌ حدث خطأ في جلب البيانات:", err);
+          });
+      }
+
+      document
+        .getElementById("attendanceBtn")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+
+          // إخفاء كل الأقسام
+          document
+            .querySelectorAll(".content")
+            .forEach((el) => (el.style.display = "none"));
+
+          // عرض قسم الحضور
+          document.getElementById("attendanceSection").style.display = "block";
+
+          // تحميل البيانات
+          fetchAttendanceData();
+        });
+
+        // إغلاق القائمة الجانبية تلقائيًا في الموبايل لما المستخدم يضغط على عنصر منها
+document.querySelectorAll(".menu a").forEach(link => {
+  link.addEventListener("click", () => {
+    const menu = document.querySelector(".menu");
+
+    // لو الشاشة صغيرة (موبايل) والقائمة مفتوحة
+    if (window.innerWidth <= 768 && menu.classList.contains("show")) {
+      menu.classList.remove("show");
     }
-</script>
+  });
+});
 
-</body>
-
+document.getElementById('closeSidebarBtn').addEventListener('click', () => {
+    const menu = document.querySelector('.menu');
+    menu.classList.remove('show');
+});
+    </script>
+  </body>
 </html>
