@@ -48,10 +48,11 @@
           </a>
         </li>
         <li>
-          <a href="">
-            <i class="fas fa-table"></i>
-            <p>Honda start</p>
-          </a>
+          <a href="#" id="hondaStartBtn">
+  <i class="fas fa-table"></i>
+  <p>Honda start</p>
+</a>
+
         </li>
         <li>
           <a href="">
@@ -184,6 +185,39 @@
 
     </div>
 
+    <div class="content" id="hondaStartSection" style="display: none">
+  <div class="title-inffo">
+    <p>Honda Start</p>
+    <i class="fas fa-table"></i>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="hondaStartTable">
+      <thead>
+        <tr>
+          <th>Resource Name</th>
+          <th>PG S.N.</th>
+          <th>Category</th>
+          <th>Office</th>
+          <th>Site ID</th>
+          <th>Date in</th>
+          <th>Time in</th>
+          <th>Date out</th>
+          <th>Time out</th>
+          <th>PG running hours</th>
+          <th>TT</th>
+          <th>Fuel spear</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- البيانات هتتحط هنا -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
     <script>
       const toggleBtn = document.querySelector(".toggle-menu");
       const menu = document.querySelector(".menu");
@@ -274,6 +308,156 @@ document.getElementById('closeSidebarBtn').addEventListener('click', () => {
     const menu = document.querySelector('.menu');
     menu.classList.remove('show');
 });
+
+// إغلاق القائمة عند الضغط خارجها (موبايل فقط)
+document.addEventListener("click", function (event) {
+  const menu = document.querySelector(".menu");
+  const toggleBtn = document.querySelector(".toggle-menu");
+  if (
+    window.innerWidth <= 768 &&
+    menu.classList.contains("show") &&
+    !menu.contains(event.target) &&
+    !toggleBtn.contains(event.target)
+  ) {
+    menu.classList.remove("show");
+  }
+});
+
+
+function fetchHondaData() {
+  fetch("https://script.google.com/macros/s/AKfycbxoeOxRbxrbvYiqS_gtvYJuPMDasV3rbFyg-GyZhR5Scdj30OGhU6wq1jDtfMnWV9G7ig/exec")
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("بيانات Honda:", data);
+
+      const groupedRows = {};
+
+      data.forEach((row) => {
+        const sessionKey = `${row["PG S.N."]}_${row["Site ID"]}`;
+        if (!groupedRows[sessionKey]) {
+          groupedRows[sessionKey] = [];
+        }
+
+        if (row["نوع التسكين"] === "بداية التسكين") {
+          groupedRows[sessionKey].push({
+            "Resource Name": row["Resource Name"] || "-",
+            "PG S.N.": row["PG S.N."] || "-",
+            "Category": row["Category"] || "-",
+            "Office": row["Office"] || "-",
+            "Site ID": row["Site ID"] || "-",
+            "ticketNumber": row["ticketNumber"] || "-",
+            "Fuel spear": row["Fuel spear"] || "-",
+            "Date in": formatDate(row["Date"]),
+            "Time in": formatTime(row["Time "]),
+            "Date out": "-",
+            "Time out": "-"
+          });
+        } else if (row["نوع التسكين"] === "نهاية التسكين") {
+          const lastSession = groupedRows[sessionKey][groupedRows[sessionKey].length - 1];
+          if (lastSession && lastSession["Date out"] === "-") {
+            lastSession["Date out"] = formatDate(row["Date"]);
+            lastSession["Time out"] = formatTime(row["Time "]);
+          } else {
+            // تسكينة نهاية بدون بداية
+            groupedRows[sessionKey].push({
+              "Resource Name": row["Resource Name"] || "-",
+              "PG S.N.": row["PG S.N."] || "-",
+              "Category": row["Category"] || "-",
+              "Office": row["Office"] || "-",
+              "Site ID": row["Site ID"] || "-",
+              "ticketNumber": row["ticketNumber"] || "-",
+              "Fuel spear": row["Fuel spear"] || "-",
+              "Date in": "-",
+              "Time in": "-",
+              "Date out": formatDate(row["Date"]),
+              "Time out": formatTime(row["Time "])
+            });
+          }
+        }
+      });
+
+      const tbody = document.querySelector("#hondaStartTable tbody");
+      tbody.innerHTML = "";
+
+      Object.values(groupedRows).forEach((sessionArray) => {
+        sessionArray.forEach((row) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row["Resource Name"]}</td>
+            <td>${row["PG S.N."]}</td>
+            <td>${row["Category"]}</td>
+            <td>${row["Office"]}</td>
+            <td>${row["Site ID"]}</td>
+            <td>${row["Date in"]}</td>
+            <td>${row["Time in"]}</td>
+            <td>${row["Date out"]}</td>
+            <td>${row["Time out"]}</td>
+            <td>${calculateDuration(row["Date in"], row["Time in"], row["Date out"], row["Time out"])}</td>
+            <td>${row["ticketNumber"]}</td>
+            <td>${row["Fuel spear"]}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    })
+    .catch((err) => {
+      console.error("❌ خطأ أثناء جلب بيانات Honda Start:", err);
+    });
+}
+
+
+// تنسيق التاريخ
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  return isNaN(date) ? "-" : date.toISOString().split("T")[0]; // "2025-07-27"
+}
+
+
+// تنسيق الوقت
+function formatTime(timeStr) {
+  const date = new Date(timeStr);
+  if (isNaN(date)) return "-";
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`; // "14:35"
+}
+
+
+function calculateDuration(dateIn, timeIn, dateOut, timeOut) {
+  try {
+    const inDate = new Date(`${dateIn} ${timeIn}`);
+    const outDate = new Date(`${dateOut} ${timeOut}`);
+
+    if (isNaN(inDate) || isNaN(outDate)) return "-";
+
+    const diffMs = outDate - inDate;
+    const diffHours = diffMs / 1000 / 60 / 60;
+
+    return diffHours.toFixed(2); // ساعتين ونص = 2.50
+  } catch (err) {
+    return "-";
+  }
+}
+
+
+
+
+document.getElementById("hondaStartBtn").addEventListener("click", (e) => {
+  e.preventDefault();
+
+  // إخفاء باقي الأقسام
+  document.querySelectorAll(".content").forEach((el) => (el.style.display = "none"));
+
+  // عرض قسم هوندا
+  document.getElementById("hondaStartSection").style.display = "block";
+
+  // تحميل البيانات
+  fetchHondaData();
+});
+
+
+
     </script>
   </body>
 </html>
