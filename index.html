@@ -2,487 +2,504 @@
 <html lang="ar" dir="rtl">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>نظام اليوميات - لوحة التحكم</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نظام اليوميات - لوحة التحكم</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      margin: 0;
-      font-family: 'Cairo', sans-serif;
-      background-color: #f1f5f9;
-      display: flex;
-      min-height: 100vh;
-    }
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background-color: #f1f5f9;
+            display: flex;
+            min-height: 100vh;
+        }
 
-    .sidebar {
-      width: 220px;
-      background-color: #1e293b;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-    }
+        .sidebar {
+            width: 220px;
+            background-color: #1e293b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
 
-    .sidebar h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 20px;
-      border-bottom: 1px solid #475569;
-      padding-bottom: 10px;
-    }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 20px;
+            border-bottom: 1px solid #475569;
+            padding-bottom: 10px;
+        }
 
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      padding: 12px;
-      margin: 5px 0;
-      border-radius: 8px;
-      transition: 0.3s;
-      display: block;
-      cursor: pointer;
-    }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: 0.3s;
+            display: block;
+            cursor: pointer;
+        }
 
-    .sidebar a:hover,
-    .sidebar a.active {
-      background-color: #3b82f6;
-    }
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #3b82f6;
+        }
 
-    .main {
-      flex: 1;
-      padding: 30px;
-    }
+        .main {
+            flex: 1;
+            padding: 30px;
+        }
 
-    .section {
-      display: none;
-    }
+        .section {
+            display: none;
+        }
 
-    .section.active {
-      display: block;
-    }
+        .section.active {
+            display: block;
+        }
 
-    .card {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-      max-width: 700px;
-      /* أضف هذا السطر */
-      margin: auto;
-    }
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            max-width: 700px;
+            /* أضف هذا السطر */
+            margin: auto;
+        }
 
 
-    .card h3 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #1e293b;
-    }
+        .card h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
 
-    label {
-      display: block;
-      margin-top: 15px;
-      margin-bottom: 5px;
-      color: #334155;
-      font-weight: bold;
-    }
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #334155;
+            font-weight: bold;
+        }
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 15px;
-    }
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+        }
 
-    button {
-      margin-top: 20px;
-      width: 100%;
-      background-color: #10b981;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-    button:hover {
-      background-color: #059669;
-    }
+        button:hover {
+            background-color: #059669;
+        }
 
-    .dashboard-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
-    }
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
 
-    .dash-card {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      text-align: center;
-      font-weight: bold;
-      font-size: 16px;
-      color: #334155;
-    }
+        .dash-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #334155;
+        }
 
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
 
-      .sidebar {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-around;
-      }
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+            }
 
-      .sidebar h2 {
-        display: none;
-      }
+            .sidebar h2 {
+                display: none;
+            }
 
-      .sidebar a {
-        padding: 10px;
-        flex: 1;
-        text-align: center;
-      }
+            .sidebar a {
+                padding: 10px;
+                flex: 1;
+                text-align: center;
+            }
 
-      .main {
-        padding: 15px;
-      }
-    }
-  </style>
+            .main {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>🚗 لوحة التحكم</h2>
-    <a class="nav-link active" data-target="home">🏠 الرئيسية</a>
-    <a class="nav-link" data-target="offices">🏢 المكاتب</a>
-    <a class="nav-link" data-target="daily">📝 تسجيل يومية جديدة</a>
-    <a class="nav-link" data-target="daily">📆 اليوميات</a>
-    <a class="nav-link" data-target="newDiscount">➖ تسجيل خصم جديد</a>
-    <a class="nav-link" data-target="discounts">💸 الخصومات</a>
-    <a class="nav-link" data-target="newBonus">🎉 تسجيل بونص جديد</a>
-    <a class="nav-link" data-target="bonus">🎁 البونص</a>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main">
-
-    <!-- الرئيسية -->
-    <div id="home" class="section active">
-      <div class="card">
-        <h3>مرحبًا بك في النظام</h3>
-        <div class="dashboard-cards">
-          <div class="dash-card">إجمالي اليوميات: 0</div>
-          <div class="dash-card">إجمالي الخصومات: 0</div>
-          <div class="dash-card">إجمالي البونص: 0</div>
-        </div>
-      </div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>🚗 لوحة التحكم</h2>
+        <a class="nav-link active" data-target="home">🏠 الرئيسية</a>
+        <a class="nav-link" data-target="offices">🏢 المكاتب</a>
+        <a class="nav-link" data-target="daily">📝 تسجيل يومية جديدة</a>
+        <a class="nav-link" data-target="daily">📆 اليوميات</a>
+        <a class="nav-link" data-target="newDiscount">➖ تسجيل خصم جديد</a>
+        <a class="nav-link" data-target="discounts">💸 الخصومات</a>
+        <a class="nav-link" data-target="newBonus">🎉 تسجيل بونص جديد</a>
+        <a class="nav-link" data-target="bonus">🎁 البونص</a>
     </div>
 
-    <!-- اليوميات -->
-    <div id="daily" class="section">
-      <div class="card">
-        <h3>تسجيل يومية جديدة</h3>
-        <form id="dailyForm">
-          <label>📅 التاريخ</label>
-          <input type="date" name="date" required>
+    <!-- Main Content -->
+    <div class="main">
 
-          <label>👤 اسم السائق</label>
-          <input type="text" name="driver" required>
-
-          <label>🚗 مكان السيارة</label>
-          <input type="text" name="carLocation" required>
-
-
-          <label>🏢 المكتب</label>
-          <input type="text" name="office" required>
-
-          <label>🕒 ساعات التغطية</label>
-          <select name="coverage" required>
-            <option value="">اختر التغطية</option>
-            <option>تغطية 12 ساعه صبح</option>
-            <option>تغطية 12 ساعة ليل</option>
-            <option>تغطية 24 ساعه</option>
-          </select>
-
-          <label>🏬 مكتب العمل</label>
-          <select name="workOffice" required>
-            <option value="">اختر المكتب</option>
-            <option>مكتب شبرا</option>
-            <option>مكتب الجسر</option>
-            <option>مكتب المهندسين</option>
-          </select>
-
-          <label>💰 السعر</label>
-          <input type="number" name="price" required>
-
-          <label>📝 ملحوظات</label>
-          <textarea name="notes" rows="3"></textarea>
-
-          <button type="submit">💾 حفظ اليومية</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- الخصومات -->
-    <div id="discounts" class="section">
-      <div class="card">
-        <h3>صفحة الخصومات (قيد الإنشاء)</h3>
-        <p>هنا هتقدر تضيف وتسجل الخصومات الخاصة بالسائقين.</p>
-      </div>
-    </div>
-
-    <!-- البونص -->
-    <div id="bonus" class="section">
-      <div class="card">
-        <h3>صفحة البونص (قيد الإنشاء)</h3>
-        <p>هنا هتقدر تسجل البونص والمكافآت للسائقين.</p>
-      </div>
-    </div>
-
-    <!-- المكاتب -->
-    <div id="offices" class="section">
-      <div class="card">
-        <h3>المكاتب</h3>
-
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-          <button onclick="openOfficePopup()"
-            style="width: 260px; background-color: #3b82f6; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 15px; cursor: pointer;">➕
-            إضافة مكتب</button>
-          <input type="text" placeholder="🔍 ابحث عن مكتب"
-            style="width: 360px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px;" />
+        <!-- الرئيسية -->
+        <div id="home" class="section active">
+            <div class="card">
+                <h3>مرحبًا بك في النظام</h3>
+                <div class="dashboard-cards">
+                    <div class="dash-card">إجمالي اليوميات: 0</div>
+                    <div class="dash-card">إجمالي الخصومات: 0</div>
+                    <div class="dash-card">إجمالي البونص: 0</div>
+                </div>
+            </div>
         </div>
 
-        <table style="width: 100%; border-collapse: collapse; background-color: #f8fafc;">
-          <thead>
-            <tr style="background-color: #e2e8f0;">
-              <th style="padding: 10px;">#</th>
-              <th style="padding: 10px;">اسم المالك</th>
-              <th style="padding: 10px;">اسم المكتب</th>
-              <th style="padding: 10px;">العنوان</th>
-              <th style="padding: 10px;">الهاتف</th>
-            </tr>
-          </thead>
-          <tbody id="officeTableBody">
-            <!-- يتم تعبئة الصفوف هنا تلقائيًا -->
-          </tbody>
-        </table>
-      </div>
-    </div>
+        <!-- اليوميات -->
+        <div id="daily" class="section">
+            <div class="card">
+                <h3>تسجيل يومية جديدة</h3>
+                <form id="dailyForm">
+                    <label>📅 التاريخ</label>
+                    <input type="date" name="date" required>
 
-    <!-- بوب أب إضافة مكتب -->
-    <div id="officePopup"
-      style="display: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
-      <div
-        style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative;">
-        <h3 style="text-align: center;">إضافة مكتب</h3>
+                    <label>👤 اسم السائق</label>
+                    <input type="text" name="driver" required>
 
-        <label>اسم المالك</label>
-        <input type="text" id="ownerName" />
-
-        <label>اسم المكتب</label>
-        <input type="text" id="officeName" />
-
-        <label>العنوان</label>
-        <input type="text" id="officeAddress" />
-
-        <label>رقم الهاتف</label>
-        <input type="text" id="officePhone" />
-
-        <button onclick="saveOffice()">💾 حفظ المكتب</button>
-        <button onclick="closeOfficePopup()" style="background-color: #f87171;">❌ إغلاق</button>
-      </div>
-    </div>
-
-    <!-- تسجيل خصم جديد -->
-    <div id="newDiscount" class="section">
-      <div class="card">
-        <h3>تسجيل خصم جديد</h3>
-        <form id="discountForm">
-
-          <label>📅 التاريخ</label>
-          <input type="date" name="date" required>
-
-          <label>👤 اسم السائق</label>
-          <input type="text" name="driver" required>
-
-          <label>🏢 اسم المكتب</label>
-          <input type="text" name="office" required>
-
-          <label>🌍 المنطقة (الاريا)</label>
-          <input type="text" name="area" required>
-
-          <label>💸 نوع الخصم</label>
-          <select name="discountType" required>
-            <option value="">اختر نوع الخصم</option>
-            <option>خصم ربع شفت</option>
-            <option>خصم نص شفت</option>
-            <option>خصم شفت صباحي</option>
-            <option>خصم شفت مسائي</option>
-            <option>خصم شفت 24 ساعة</option>
-          </select>
-
-          <label>📝 سبب الخصم</label>
-          <textarea name="reason" rows="3" required></textarea>
-
-          <button type="submit">💾 حفظ الخصم</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- تسجيل بونص جديد -->
-    <div id="newBonus" class="section">
-      <div class="card">
-        <h3>تسجيل بونص جديد</h3>
-        <form id="bonusForm">
-
-          <label>📅 التاريخ</label>
-          <input type="date" name="date" required>
-
-          <label>👤 اسم السائق</label>
-          <input type="text" name="driver" required>
-
-          <label>🏢 اسم المكتب</label>
-          <input type="text" name="office" required>
-
-          <label>🌍 المنطقة (الاريا)</label>
-          <input type="text" name="area" required>
-
-          <label>💰 مبلغ البونص</label>
-          <input type="number" name="amount" placeholder="مثال: 150" required>
-
-          <label>📝 سبب البونص</label>
-          <textarea name="reason" rows="3" required></textarea>
-
-          <button type="submit">💾 حفظ البونص</button>
-        </form>
-      </div>
-    </div>
+                    <label>🚗 مكان السيارة</label>
+                    <input type="text" name="carLocation" required>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-      // التنقل بين الصفحات
-      const links = document.querySelectorAll(".nav-link");
-      const sections = document.querySelectorAll(".section");
+                    <label>🏢 المكتب</label>
+                    <input type="text" name="office" required>
 
-      links.forEach(link => {
-        link.addEventListener("click", () => {
-          links.forEach(l => l.classList.remove("active"));
-          link.classList.add("active");
+                    <label>🕒 ساعات التغطية</label>
+                    <select name="coverage" required>
+                        <option value="">اختر التغطية</option>
+                        <option>تغطية 12 ساعه صبح</option>
+                        <option>تغطية 12 ساعة ليل</option>
+                        <option>تغطية 24 ساعه</option>
+                    </select>
 
-          sections.forEach(sec => {
-            sec.classList.remove("active");
-            if (sec.id === link.dataset.target) {
-              sec.classList.add("active");
+                    <label>🏬 مكتب العمل</label>
+                    <select name="workOffice" required>
+                        <option value="">اختر المكتب</option>
+                        <option>مكتب شبرا</option>
+                        <option>مكتب الجسر</option>
+                        <option>مكتب المهندسين</option>
+                    </select>
+
+                    <label>💰 السعر</label>
+                    <input type="number" name="price" required>
+
+                    <label>📝 ملحوظات</label>
+                    <textarea name="notes" rows="3"></textarea>
+
+                    <button type="submit">💾 حفظ اليومية</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- الخصومات -->
+        <div id="discounts" class="section">
+            <div class="card">
+                <h3>صفحة الخصومات (قيد الإنشاء)</h3>
+                <p>هنا هتقدر تضيف وتسجل الخصومات الخاصة بالسائقين.</p>
+            </div>
+        </div>
+
+        <!-- البونص -->
+        <div id="bonus" class="section">
+            <div class="card">
+                <h3>صفحة البونص (قيد الإنشاء)</h3>
+                <p>هنا هتقدر تسجل البونص والمكافآت للسائقين.</p>
+            </div>
+        </div>
+
+        <!-- المكاتب -->
+        <div id="offices" class="section">
+            <div class="card">
+                <h3>المكاتب</h3>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button onclick="openOfficePopup()"
+                        style="width: 260px; background-color: #3b82f6; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 15px; cursor: pointer;">➕
+                        إضافة مكتب</button>
+                    <input type="text" placeholder="🔍 ابحث عن مكتب"
+                        style="width: 360px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px;" />
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; background-color: #f8fafc;">
+                    <thead>
+                        <tr style="background-color: #e2e8f0;">
+                            <th style="padding: 10px;">#</th>
+                            <th style="padding: 10px;">اسم المالك</th>
+                            <th style="padding: 10px;">اسم المكتب</th>
+                            <th style="padding: 10px;">العنوان</th>
+                            <th style="padding: 10px;">الهاتف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="officeTableBody">
+                        <!-- يتم تعبئة الصفوف هنا تلقائيًا -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- بوب أب إضافة مكتب -->
+        <div id="officePopup"
+            style="display: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+            <div
+                style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative;">
+                <h3 style="text-align: center;">إضافة مكتب</h3>
+
+                <form
+                    action="https://script.google.com/macros/s/AKfycbwrHnQAT6G3Pw2MHvLtadKRIIkc3f3NcDHbJM-_xZ1mmQ3-wkNCDtttnTQgmn3Qxfwm/exec"
+                    method="POST" target="submitFrame" onsubmit="officeSubmitted()">
+                    <label>اسم المالك</label>
+                    <input type="text" name="owner" required />
+
+                    <label>اسم المكتب</label>
+                    <input type="text" name="officeName" required />
+
+                    <label>العنوان</label>
+                    <input type="text" name="address" required />
+
+                    <label>رقم الهاتف</label>
+                    <input type="text" name="phone" required />
+
+                    <button type="submit">💾 حفظ المكتب</button>
+                    <button type="button" onclick="closeOfficePopup()" style="background-color: #f87171;">❌
+                        إغلاق</button>
+                </form>
+
+                <!-- إطار مخفي لتفادي إعادة تحميل الصفحة -->
+                <iframe name="submitFrame" style="display: none;"></iframe>
+            </div>
+        </div>
+
+        <!-- تسجيل خصم جديد -->
+        <div id="newDiscount" class="section">
+            <div class="card">
+                <h3>تسجيل خصم جديد</h3>
+                <form id="discountForm">
+
+                    <label>📅 التاريخ</label>
+                    <input type="date" name="date" required>
+
+                    <label>👤 اسم السائق</label>
+                    <input type="text" name="driver" required>
+
+                    <label>🏢 اسم المكتب</label>
+                    <input type="text" name="office" required>
+
+                    <label>🌍 المنطقة (الاريا)</label>
+                    <input type="text" name="area" required>
+
+                    <label>💸 نوع الخصم</label>
+                    <select name="discountType" required>
+                        <option value="">اختر نوع الخصم</option>
+                        <option>خصم ربع شفت</option>
+                        <option>خصم نص شفت</option>
+                        <option>خصم شفت صباحي</option>
+                        <option>خصم شفت مسائي</option>
+                        <option>خصم شفت 24 ساعة</option>
+                    </select>
+
+                    <label>📝 سبب الخصم</label>
+                    <textarea name="reason" rows="3" required></textarea>
+
+                    <button type="submit">💾 حفظ الخصم</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- تسجيل بونص جديد -->
+        <div id="newBonus" class="section">
+            <div class="card">
+                <h3>تسجيل بونص جديد</h3>
+                <form id="bonusForm">
+
+                    <label>📅 التاريخ</label>
+                    <input type="date" name="date" required>
+
+                    <label>👤 اسم السائق</label>
+                    <input type="text" name="driver" required>
+
+                    <label>🏢 اسم المكتب</label>
+                    <input type="text" name="office" required>
+
+                    <label>🌍 المنطقة (الاريا)</label>
+                    <input type="text" name="area" required>
+
+                    <label>💰 مبلغ البونص</label>
+                    <input type="number" name="amount" placeholder="مثال: 150" required>
+
+                    <label>📝 سبب البونص</label>
+                    <textarea name="reason" rows="3" required></textarea>
+
+                    <button type="submit">💾 حفظ البونص</button>
+                </form>
+            </div>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            // التنقل بين الصفحات
+            const links = document.querySelectorAll(".nav-link");
+            const sections = document.querySelectorAll(".section");
+
+            links.forEach(link => {
+                link.addEventListener("click", () => {
+                    links.forEach(l => l.classList.remove("active"));
+                    link.classList.add("active");
+
+                    sections.forEach(sec => {
+                        sec.classList.remove("active");
+                        if (sec.id === link.dataset.target) {
+                            sec.classList.add("active");
+                            if (sec.id === "offices") loadOffices(); // تحميل بيانات المكاتب
+                        }
+                    });
+
+                });
+            });
+
+            // معالجة نموذج اليومية
+            document.getElementById("dailyForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {};
+                formData.forEach((value, key) => data[key] = value);
+                console.log("✅ بيانات اليومية:", data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحفظ',
+                    text: '✅ تم حفظ اليومية بنجاح (نموذج تجريبي فقط)',
+                });
+
+                this.reset();
+            });
+
+            let officeCounter = 1;
+
+            function openOfficePopup() {
+                document.getElementById('officePopup').style.display = 'flex';
             }
-          });
-        });
-      });
 
-      // معالجة نموذج اليومية
-      document.getElementById("dailyForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => data[key] = value);
-        console.log("✅ بيانات اليومية:", data);
-        Swal.fire({
-          icon: 'success',
-          title: 'تم الحفظ',
-          text: '✅ تم حفظ اليومية بنجاح (نموذج تجريبي فقط)',
-        });
-
-        this.reset();
-      });
-
-      let officeCounter = 1;
-
-      function openOfficePopup() {
-        document.getElementById('officePopup').style.display = 'flex';
-      }
-
-      function closeOfficePopup() {
-        document.getElementById('officePopup').style.display = 'none';
-      }
-
-      function saveOffice() {
-        const owner = document.getElementById("ownerName").value;
-        const name = document.getElementById("officeName").value;
-        const address = document.getElementById("officeAddress").value;
-        const phone = document.getElementById("officePhone").value;
-
-        if (!owner || !name || !address || !phone) {
-          Swal.fire("❗️خطأ", "يرجى ملء جميع البيانات", "warning");
-          return;
-        }
-
-        const tbody = document.getElementById("officeTableBody");
-        const row = document.createElement("tr");
-        row.innerHTML = `
-    <td style="padding: 10px;">${officeCounter++}</td>
-    <td style="padding: 10px;">${owner}</td>
-    <td style="padding: 10px;">${name}</td>
-    <td style="padding: 10px;">${address}</td>
-    <td style="padding: 10px;">${phone}</td>
-  `;
-        tbody.appendChild(row);
-
-        closeOfficePopup();
-        document.getElementById("ownerName").value = "";
-        document.getElementById("officeName").value = "";
-        document.getElementById("officeAddress").value = "";
-        document.getElementById("officePhone").value = "";
-      }
-
-      document.getElementById("discountForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => data[key] = value);
-        console.log("✅ خصم جديد:", data);
-
-        Swal.fire({
-          icon: 'success',
-          title: 'تم الحفظ',
-          text: '✅ تم حفظ الخصم بنجاح (نموذج تجريبي فقط)',
-        });
-
-        this.reset();
-      });
-
-      document.getElementById("bonusForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => data[key] = value);
-        console.log("✅ بيانات البونص:", data);
-
-        Swal.fire({
-          icon: 'success',
-          title: 'تم الحفظ',
-          text: '✅ تم حفظ البونص بنجاح (نموذج تجريبي فقط)',
-        });
-
-        this.reset();
-      });
+            function closeOfficePopup() {
+                document.getElementById('officePopup').style.display = 'none';
+            }
 
 
-    </script>
+
+            function loadOffices() {
+                fetch("https://script.google.com/macros/s/AKfycbwrHnQAT6G3Pw2MHvLtadKRIIkc3f3NcDHbJM-_xZ1mmQ3-wkNCDtttnTQgmn3Qxfwm/exec")
+                    .then((res) => res.json())
+                    .then((data) => {
+                        const tbody = document.getElementById("officeTableBody");
+                        tbody.innerHTML = "";
+
+                        data.forEach((item, index) => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
+          <td style="padding: 10px;">${index + 1}</td>
+          <td style="padding: 10px;">${item.owner}</td>
+          <td style="padding: 10px;">${item.officeName}</td>
+          <td style="padding: 10px;">${item.address}</td>
+          <td style="padding: 10px;">${item.phone}</td>
+        `;
+                            tbody.appendChild(row);
+                        });
+                    })
+                    .catch((err) => {
+                        console.error("❌ فشل تحميل المكاتب:", err);
+                    });
+            }
+
+
+            document.getElementById("discountForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const data = {};
+                formData.forEach((value, key) => data[key] = value);
+                console.log("✅ خصم جديد:", data);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحفظ',
+                    text: '✅ تم حفظ الخصم بنجاح (نموذج تجريبي فقط)',
+                });
+
+                this.reset();
+            });
+
+            document.getElementById("bonusForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const data = {};
+                formData.forEach((value, key) => data[key] = value);
+                console.log("✅ بيانات البونص:", data);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحفظ',
+                    text: '✅ تم حفظ البونص بنجاح (نموذج تجريبي فقط)',
+                });
+
+                this.reset();
+            });
+
+            function officeSubmitted() {
+                Swal.fire("✅ تم الحفظ", "تم إرسال المكتب إلى Google Sheet بنجاح", "success");
+                closeOfficePopup();
+
+                // تفريغ الفورم بعد الإرسال
+                setTimeout(() => {
+                    document.querySelector('#officePopup form').reset();
+                }, 500);
+            }
+
+        </script>
 
 </body>
 
