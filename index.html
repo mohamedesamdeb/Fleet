@@ -1,463 +1,489 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+<html lang="ar" dir="rtl">
 
-    <title>Document</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نظام اليوميات - لوحة التحكم</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  <body>
-    <button class="toggle-menu">
-      <i class="fas fa-bars"></i>
-    </button>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f1f5f9;
+      display: flex;
+      min-height: 100vh;
+    }
 
-    <div class="menu">
-        <button class="close-menu" id="closeSidebarBtn">×</button>
+    .sidebar {
+      width: 220px;
+      background-color: #1e293b;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
 
-      <ul>
-        <li class="profile">
-          <div class="img-box">
-            <img src="1.jpg" alt="profile" />
-          </div>
-          <h2>mohamed esam</h2>
-        </li>
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 20px;
+      border-bottom: 1px solid #475569;
+      padding-bottom: 10px;
+    }
 
-        <li>
-          <a class="active" href="">
-            <i class="fas fa-home"></i>
-            <p>Dashboard</p>
-          </a>
-        </li>
-        <li>
-          <a href="#" id="attendanceBtn">
-            <i class="fas fa-clock"></i>
-            <p>ِِِِAttendance</p>
-          </a>
-        </li>
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px;
+      margin: 5px 0;
+      border-radius: 8px;
+      transition: 0.3s;
+      display: block;
+      cursor: pointer;
+    }
 
-        <li>
-          <a href="">
-            <i class="fas fa-bell"></i>
-            <p>Leave requests</p>
-          </a>
-        </li>
-        <li>
-          <a href="#" id="hondaStartBtn">
-  <i class="fas fa-table"></i>
-  <p>Honda start</p>
-</a>
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #3b82f6;
+    }
 
-        </li>
-        <li>
-          <a href="">
-            <i class="fas fa-chart-pie"></i>
-            <p>Charts</p>
-          </a>
-        </li>
-        <li>
-          <a href="">
-            <i class="fas fa-warehouse"></i>
-            <p>Posts</p>
-          </a>
-        </li>
-        <li>
-          <a href="">
-            <i class="fas fa-user-plus"></i>
-            <p>Favorite</p>
-          </a>
-        </li>
-        <li>
-          <a href="">
-            <i class="fas fa-address-card"></i>
-            <p>Settings</p>
-          </a>
-        </li>
-        <li class="log-out">
-          <a href="">
-            <i class="fas fa-sign-out"></i>
-            <p>Log Out</p>
-          </a>
-        </li>
-      </ul>
-    </div>
+    .main {
+      flex: 1;
+      padding: 30px;
+    }
 
-    <div class="content">
-      <div class="title-inffo">
-        <p>Dashboard</p>
-        <i class="fas fa-chart-bar"></i>
-      </div>
+    .section {
+      display: none;
+    }
 
-      <div class="data-info">
-        <div class="box">
-          <i class="fas fa-user-group"></i>
-          <div class="data">
-            <p>User</p>
-            <span>100</span>
-            <h5>DownTown = 10</h5>
-            <h5>Gesr elsuiz = 9</h5>
-            <h5>Mohandsen = 6</h5>
-          </div>
-        </div>
-        <div class="box">
-          <i class="fas fa-dollar"></i>
-          <div class="data">
-            <p>Revenue</p>
-            <span>$126</span>
-          </div>
-        </div>
-        <div class="box">
-          <i class="fas fa-pen"></i>
-          <div class="data">
-            <p>Posts</p>
-            <span>765</span>
-          </div>
-        </div>
-        <div class="box">
-          <i class="fas fa-table"></i>
-          <div class="data">
-            <p>Products</p>
-            <span>34</span>
-          </div>
-        </div>
-      </div>
+    .section.active {
+      display: block;
+    }
 
-      <div class="title-inffo">
-        <p>Products</p>
-        <i class="fas fa-table"></i>
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Resource Name</th>
-            <th>PG S.N.</th>
-            <th>Category</th>
-            <th>Office</th>
-            <th>Site ID</th>
-            <th>Date in</th>
-            <th>Time in</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>mohamed ahmed</td>
-            <td>D4</td>
-            <td>Power cut</td>
-            <td>DownTown</td>
-            <td><span class="Site">CAI2904</span></td>
-            <td><span class="Date">25-7-2025</span></td>
-            <td><span class="Time">1:00 PM</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="content" id="attendanceSection" style="display: none">
-      <div class="title-inffo">
-        <p>ِِِِAttendance</p>
-        <i class="fas fa-clock"></i>
-      </div>
-
-     <div class="table-wrapper">
-  <table id="attendanceTable">
-    <thead>
-      <tr>
-        <th>Time - Date</th>
-        <th>Name</th>
-        <th>Office</th>
-        <th>Log in - log out</th>
-        <th>Latitude</th>
-        <th>Longitude</th>
-        <th>Image link</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- بيانات الحضور هتتحط هنا -->
-    </tbody>
-  </table>
-</div>
-
-    </div>
-
-    <div class="content" id="hondaStartSection" style="display: none">
-  <div class="title-inffo">
-    <p>Honda Start</p>
-    <i class="fas fa-table"></i>
-  </div>
-
-  <div class="table-wrapper">
-    <table id="hondaStartTable">
-      <thead>
-        <tr>
-          <th>Resource Name</th>
-          <th>PG S.N.</th>
-          <th>Category</th>
-          <th>Office</th>
-          <th>Site ID</th>
-          <th>Date in</th>
-          <th>Time in</th>
-          <th>Date out</th>
-          <th>Time out</th>
-          <th>PG running hours</th>
-          <th>TT</th>
-          <th>Fuel spear</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- البيانات هتتحط هنا -->
-      </tbody>
-    </table>
-  </div>
-</div>
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      max-width: 700px;
+      /* أضف هذا السطر */
+      margin: auto;
+    }
 
 
+    .card h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
 
-    <script>
-      const toggleBtn = document.querySelector(".toggle-menu");
-      const menu = document.querySelector(".menu");
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      color: #334155;
+      font-weight: bold;
+    }
 
-      toggleBtn.addEventListener("click", () => {
-        menu.classList.toggle("show");
-      });
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+    }
 
-      const attendanceBtn = document.getElementById("attendanceBtn");
-      const attendanceSection = document.getElementById("attendanceSection");
-      const dashboardContent = document.querySelector(".content"); // محتوى الـ Dashboard الأساسي
+    button {
+      margin-top: 20px;
+      width: 100%;
+      background-color: #10b981;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-      attendanceBtn.addEventListener("click", (e) => {
-        e.preventDefault();
+    button:hover {
+      background-color: #059669;
+    }
 
-        // إخفاء كل المحتويات
-        document
-          .querySelectorAll(".content")
-          .forEach((c) => (c.style.display = "none"));
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
 
-        // إظهار قسم الحضور
-        attendanceSection.style.display = "block";
+    .dash-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      color: #334155;
+    }
 
-        // تحميل البيانات
-        fetchAttendanceData();
-      });
-
-      function fetchAttendanceData() {
-        fetch(
-          "https://script.google.com/macros/s/AKfycby5QdbFnpkhnBFkl5el6B2rflE1HcCHTMzV2hERMhbll4veiAESm4ElsQf7Bey3sDzUAQ/exec"
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            const tbody = document.querySelector("#attendanceTable tbody");
-            tbody.innerHTML = "";
-
-            data.forEach((row) => {
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
-          <td><span class="Time">${row["الوقت"] || "-"}</span></td>
-          <td>${row["الاسم"] || "-"}</td>
-          <td>${row["المكتب"] || "-"}</td>
-          <td>${row["الإجراء"] || "-"}</td>
-          <td>${row["خط العرض (Latitude)"] || "-"}</td>
-          <td>${row["خط الطول (Longitude)"] || "-"}</td>
-          <td><a href="${
-            row["الصورة (رابط)"]
-          }" target="_blank">عرض الصورة</a></td>
-        `;
-              tbody.appendChild(tr);
-            });
-          })
-          .catch((err) => {
-            console.error("❌ حدث خطأ في جلب البيانات:", err);
-          });
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
       }
 
-      document
-        .getElementById("attendanceBtn")
-        .addEventListener("click", (e) => {
-          e.preventDefault();
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+      }
 
-          // إخفاء كل الأقسام
-          document
-            .querySelectorAll(".content")
-            .forEach((el) => (el.style.display = "none"));
+      .sidebar h2 {
+        display: none;
+      }
 
-          // عرض قسم الحضور
-          document.getElementById("attendanceSection").style.display = "block";
+      .sidebar a {
+        padding: 10px;
+        flex: 1;
+        text-align: center;
+      }
 
-          // تحميل البيانات
-          fetchAttendanceData();
-        });
-
-        // إغلاق القائمة الجانبية تلقائيًا في الموبايل لما المستخدم يضغط على عنصر منها
-document.querySelectorAll(".menu a").forEach(link => {
-  link.addEventListener("click", () => {
-    const menu = document.querySelector(".menu");
-
-    // لو الشاشة صغيرة (موبايل) والقائمة مفتوحة
-    if (window.innerWidth <= 768 && menu.classList.contains("show")) {
-      menu.classList.remove("show");
+      .main {
+        padding: 15px;
+      }
     }
-  });
-});
+  </style>
+</head>
 
-document.getElementById('closeSidebarBtn').addEventListener('click', () => {
-    const menu = document.querySelector('.menu');
-    menu.classList.remove('show');
-});
+<body>
 
-// إغلاق القائمة عند الضغط خارجها (موبايل فقط)
-document.addEventListener("click", function (event) {
-  const menu = document.querySelector(".menu");
-  const toggleBtn = document.querySelector(".toggle-menu");
-  if (
-    window.innerWidth <= 768 &&
-    menu.classList.contains("show") &&
-    !menu.contains(event.target) &&
-    !toggleBtn.contains(event.target)
-  ) {
-    menu.classList.remove("show");
-  }
-});
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>🚗 لوحة التحكم</h2>
+    <a class="nav-link active" data-target="home">🏠 الرئيسية</a>
+    <a class="nav-link" data-target="offices">🏢 المكاتب</a>
+    <a class="nav-link" data-target="daily">📝 تسجيل يومية جديدة</a>
+    <a class="nav-link" data-target="daily">📆 اليوميات</a>
+    <a class="nav-link" data-target="newDiscount">➖ تسجيل خصم جديد</a>
+    <a class="nav-link" data-target="discounts">💸 الخصومات</a>
+    <a class="nav-link" data-target="newBonus">🎉 تسجيل بونص جديد</a>
+    <a class="nav-link" data-target="bonus">🎁 البونص</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- الرئيسية -->
+    <div id="home" class="section active">
+      <div class="card">
+        <h3>مرحبًا بك في النظام</h3>
+        <div class="dashboard-cards">
+          <div class="dash-card">إجمالي اليوميات: 0</div>
+          <div class="dash-card">إجمالي الخصومات: 0</div>
+          <div class="dash-card">إجمالي البونص: 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- اليوميات -->
+    <div id="daily" class="section">
+      <div class="card">
+        <h3>تسجيل يومية جديدة</h3>
+        <form id="dailyForm">
+          <label>📅 التاريخ</label>
+          <input type="date" name="date" required>
+
+          <label>👤 اسم السائق</label>
+          <input type="text" name="driver" required>
+
+          <label>🚗 مكان السيارة</label>
+          <input type="text" name="carLocation" required>
 
 
-function fetchHondaData() {
-  fetch("https://script.google.com/macros/s/AKfycbxoeOxRbxrbvYiqS_gtvYJuPMDasV3rbFyg-GyZhR5Scdj30OGhU6wq1jDtfMnWV9G7ig/exec")
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("بيانات Honda:", data);
+          <label>🏢 المكتب</label>
+          <input type="text" name="office" required>
 
-      const groupedRows = {};
+          <label>🕒 ساعات التغطية</label>
+          <select name="coverage" required>
+            <option value="">اختر التغطية</option>
+            <option>تغطية 12 ساعه صبح</option>
+            <option>تغطية 12 ساعة ليل</option>
+            <option>تغطية 24 ساعه</option>
+          </select>
 
-      data.forEach((row) => {
-        const sessionKey = `${row["PG S.N."]}_${row["Site ID"]}`;
-        if (!groupedRows[sessionKey]) {
-          groupedRows[sessionKey] = [];
-        }
+          <label>🏬 مكتب العمل</label>
+          <select name="workOffice" required>
+            <option value="">اختر المكتب</option>
+            <option>مكتب شبرا</option>
+            <option>مكتب الجسر</option>
+            <option>مكتب المهندسين</option>
+          </select>
 
-        if (row["نوع التسكين"] === "بداية التسكين") {
-          groupedRows[sessionKey].push({
-            "Resource Name": row["Resource Name"] || "-",
-            "PG S.N.": row["PG S.N."] || "-",
-            "Category": row["Category"] || "-",
-            "Office": row["Office"] || "-",
-            "Site ID": row["Site ID"] || "-",
-            "ticketNumber": row["ticketNumber"] || "-",
-            "Fuel spear": row["Fuel spear"] || "-",
-            "Date in": formatDate(row["Date"]),
-            "Time in": formatTime(row["Time "]),
-            "Date out": "-",
-            "Time out": "-"
+          <label>💰 السعر</label>
+          <input type="number" name="price" required>
+
+          <label>📝 ملحوظات</label>
+          <textarea name="notes" rows="3"></textarea>
+
+          <button type="submit">💾 حفظ اليومية</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- الخصومات -->
+    <div id="discounts" class="section">
+      <div class="card">
+        <h3>صفحة الخصومات (قيد الإنشاء)</h3>
+        <p>هنا هتقدر تضيف وتسجل الخصومات الخاصة بالسائقين.</p>
+      </div>
+    </div>
+
+    <!-- البونص -->
+    <div id="bonus" class="section">
+      <div class="card">
+        <h3>صفحة البونص (قيد الإنشاء)</h3>
+        <p>هنا هتقدر تسجل البونص والمكافآت للسائقين.</p>
+      </div>
+    </div>
+
+    <!-- المكاتب -->
+    <div id="offices" class="section">
+      <div class="card">
+        <h3>المكاتب</h3>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+          <button onclick="openOfficePopup()"
+            style="width: 260px; background-color: #3b82f6; color: white; border: none; padding: 10px; border-radius: 8px; font-size: 15px; cursor: pointer;">➕
+            إضافة مكتب</button>
+          <input type="text" placeholder="🔍 ابحث عن مكتب"
+            style="width: 360px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px;" />
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; background-color: #f8fafc;">
+          <thead>
+            <tr style="background-color: #e2e8f0;">
+              <th style="padding: 10px;">#</th>
+              <th style="padding: 10px;">اسم المالك</th>
+              <th style="padding: 10px;">اسم المكتب</th>
+              <th style="padding: 10px;">العنوان</th>
+              <th style="padding: 10px;">الهاتف</th>
+            </tr>
+          </thead>
+          <tbody id="officeTableBody">
+            <!-- يتم تعبئة الصفوف هنا تلقائيًا -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- بوب أب إضافة مكتب -->
+    <div id="officePopup"
+      style="display: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+      <div
+        style="background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative;">
+        <h3 style="text-align: center;">إضافة مكتب</h3>
+
+        <label>اسم المالك</label>
+        <input type="text" id="ownerName" />
+
+        <label>اسم المكتب</label>
+        <input type="text" id="officeName" />
+
+        <label>العنوان</label>
+        <input type="text" id="officeAddress" />
+
+        <label>رقم الهاتف</label>
+        <input type="text" id="officePhone" />
+
+        <button onclick="saveOffice()">💾 حفظ المكتب</button>
+        <button onclick="closeOfficePopup()" style="background-color: #f87171;">❌ إغلاق</button>
+      </div>
+    </div>
+
+    <!-- تسجيل خصم جديد -->
+    <div id="newDiscount" class="section">
+      <div class="card">
+        <h3>تسجيل خصم جديد</h3>
+        <form id="discountForm">
+
+          <label>📅 التاريخ</label>
+          <input type="date" name="date" required>
+
+          <label>👤 اسم السائق</label>
+          <input type="text" name="driver" required>
+
+          <label>🏢 اسم المكتب</label>
+          <input type="text" name="office" required>
+
+          <label>🌍 المنطقة (الاريا)</label>
+          <input type="text" name="area" required>
+
+          <label>💸 نوع الخصم</label>
+          <select name="discountType" required>
+            <option value="">اختر نوع الخصم</option>
+            <option>خصم ربع شفت</option>
+            <option>خصم نص شفت</option>
+            <option>خصم شفت صباحي</option>
+            <option>خصم شفت مسائي</option>
+            <option>خصم شفت 24 ساعة</option>
+          </select>
+
+          <label>📝 سبب الخصم</label>
+          <textarea name="reason" rows="3" required></textarea>
+
+          <button type="submit">💾 حفظ الخصم</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- تسجيل بونص جديد -->
+    <div id="newBonus" class="section">
+      <div class="card">
+        <h3>تسجيل بونص جديد</h3>
+        <form id="bonusForm">
+
+          <label>📅 التاريخ</label>
+          <input type="date" name="date" required>
+
+          <label>👤 اسم السائق</label>
+          <input type="text" name="driver" required>
+
+          <label>🏢 اسم المكتب</label>
+          <input type="text" name="office" required>
+
+          <label>🌍 المنطقة (الاريا)</label>
+          <input type="text" name="area" required>
+
+          <label>💰 مبلغ البونص</label>
+          <input type="number" name="amount" placeholder="مثال: 150" required>
+
+          <label>📝 سبب البونص</label>
+          <textarea name="reason" rows="3" required></textarea>
+
+          <button type="submit">💾 حفظ البونص</button>
+        </form>
+      </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      // التنقل بين الصفحات
+      const links = document.querySelectorAll(".nav-link");
+      const sections = document.querySelectorAll(".section");
+
+      links.forEach(link => {
+        link.addEventListener("click", () => {
+          links.forEach(l => l.classList.remove("active"));
+          link.classList.add("active");
+
+          sections.forEach(sec => {
+            sec.classList.remove("active");
+            if (sec.id === link.dataset.target) {
+              sec.classList.add("active");
+            }
           });
-        } else if (row["نوع التسكين"] === "نهاية التسكين") {
-          const lastSession = groupedRows[sessionKey][groupedRows[sessionKey].length - 1];
-          if (lastSession && lastSession["Date out"] === "-") {
-            lastSession["Date out"] = formatDate(row["Date"]);
-            lastSession["Time out"] = formatTime(row["Time "]);
-          } else {
-            // تسكينة نهاية بدون بداية
-            groupedRows[sessionKey].push({
-              "Resource Name": row["Resource Name"] || "-",
-              "PG S.N.": row["PG S.N."] || "-",
-              "Category": row["Category"] || "-",
-              "Office": row["Office"] || "-",
-              "Site ID": row["Site ID"] || "-",
-              "ticketNumber": row["ticketNumber"] || "-",
-              "Fuel spear": row["Fuel spear"] || "-",
-              "Date in": "-",
-              "Time in": "-",
-              "Date out": formatDate(row["Date"]),
-              "Time out": formatTime(row["Time "])
-            });
-          }
-        }
-      });
-
-      const tbody = document.querySelector("#hondaStartTable tbody");
-      tbody.innerHTML = "";
-
-      Object.values(groupedRows).forEach((sessionArray) => {
-        sessionArray.forEach((row) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${row["Resource Name"]}</td>
-            <td>${row["PG S.N."]}</td>
-            <td>${row["Category"]}</td>
-            <td>${row["Office"]}</td>
-            <td>${row["Site ID"]}</td>
-            <td>${row["Date in"]}</td>
-            <td>${row["Time in"]}</td>
-            <td>${row["Date out"]}</td>
-            <td>${row["Time out"]}</td>
-            <td>${calculateDuration(row["Date in"], row["Time in"], row["Date out"], row["Time out"])}</td>
-            <td>${row["ticketNumber"]}</td>
-            <td>${row["Fuel spear"]}</td>
-          `;
-          tbody.appendChild(tr);
         });
       });
-    })
-    .catch((err) => {
-      console.error("❌ خطأ أثناء جلب بيانات Honda Start:", err);
-    });
-}
 
+      // معالجة نموذج اليومية
+      document.getElementById("dailyForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => data[key] = value);
+        console.log("✅ بيانات اليومية:", data);
+        Swal.fire({
+          icon: 'success',
+          title: 'تم الحفظ',
+          text: '✅ تم حفظ اليومية بنجاح (نموذج تجريبي فقط)',
+        });
 
-// تنسيق التاريخ
-function formatDate(dateStr) {
-  const date = new Date(dateStr);
-  return isNaN(date) ? "-" : date.toISOString().split("T")[0]; // "2025-07-27"
-}
+        this.reset();
+      });
 
+      let officeCounter = 1;
 
-// تنسيق الوقت
-function formatTime(timeStr) {
-  const date = new Date(timeStr);
-  if (isNaN(date)) return "-";
+      function openOfficePopup() {
+        document.getElementById('officePopup').style.display = 'flex';
+      }
 
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`; // "14:35"
-}
+      function closeOfficePopup() {
+        document.getElementById('officePopup').style.display = 'none';
+      }
 
+      function saveOffice() {
+        const owner = document.getElementById("ownerName").value;
+        const name = document.getElementById("officeName").value;
+        const address = document.getElementById("officeAddress").value;
+        const phone = document.getElementById("officePhone").value;
 
-function calculateDuration(dateIn, timeIn, dateOut, timeOut) {
-  try {
-    const inDate = new Date(`${dateIn} ${timeIn}`);
-    const outDate = new Date(`${dateOut} ${timeOut}`);
+        if (!owner || !name || !address || !phone) {
+          Swal.fire("❗️خطأ", "يرجى ملء جميع البيانات", "warning");
+          return;
+        }
 
-    if (isNaN(inDate) || isNaN(outDate)) return "-";
+        const tbody = document.getElementById("officeTableBody");
+        const row = document.createElement("tr");
+        row.innerHTML = `
+    <td style="padding: 10px;">${officeCounter++}</td>
+    <td style="padding: 10px;">${owner}</td>
+    <td style="padding: 10px;">${name}</td>
+    <td style="padding: 10px;">${address}</td>
+    <td style="padding: 10px;">${phone}</td>
+  `;
+        tbody.appendChild(row);
 
-    const diffMs = outDate - inDate;
-    const diffHours = diffMs / 1000 / 60 / 60;
+        closeOfficePopup();
+        document.getElementById("ownerName").value = "";
+        document.getElementById("officeName").value = "";
+        document.getElementById("officeAddress").value = "";
+        document.getElementById("officePhone").value = "";
+      }
 
-    return diffHours.toFixed(2); // ساعتين ونص = 2.50
-  } catch (err) {
-    return "-";
-  }
-}
+      document.getElementById("discountForm").addEventListener("submit", function (e) {
+        e.preventDefault();
 
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => data[key] = value);
+        console.log("✅ خصم جديد:", data);
 
+        Swal.fire({
+          icon: 'success',
+          title: 'تم الحفظ',
+          text: '✅ تم حفظ الخصم بنجاح (نموذج تجريبي فقط)',
+        });
 
+        this.reset();
+      });
 
-document.getElementById("hondaStartBtn").addEventListener("click", (e) => {
-  e.preventDefault();
+      document.getElementById("bonusForm").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-  // إخفاء باقي الأقسام
-  document.querySelectorAll(".content").forEach((el) => (el.style.display = "none"));
+        const formData = new FormData(this);
+        const data = {};
+        formData.forEach((value, key) => data[key] = value);
+        console.log("✅ بيانات البونص:", data);
 
-  // عرض قسم هوندا
-  document.getElementById("hondaStartSection").style.display = "block";
+        Swal.fire({
+          icon: 'success',
+          title: 'تم الحفظ',
+          text: '✅ تم حفظ البونص بنجاح (نموذج تجريبي فقط)',
+        });
 
-  // تحميل البيانات
-  fetchHondaData();
-});
-
+        this.reset();
+      });
 
 
     </script>
-  </body>
+
+</body>
+
 </html>
