@@ -472,6 +472,13 @@ table th, table td {
           <tbody id="dailyTableBody">
             <!-- البيانات هتيجي هنا -->
           </tbody>
+          <tfoot id="totalRow" style="display:none;">
+  <tr>
+    <td colspan="7" style="text-align: right; font-weight: bold;">إجمالي السعر:</td>
+    <td id="totalPriceCell" style="font-weight: bold;"></td>
+    <td></td>
+  </tr>
+</tfoot>
         </table>
       </div>
     </div>
@@ -584,6 +591,16 @@ function applyFiltersAndRenderTable() {
   });
 
   updateTotalDailyAmount(filteredData);
+
+  // إظهار الإجمالي لو فيه فلتر مكتب
+  const totalRow = document.getElementById("totalRow");
+  if (filterOffice && filteredData.length > 0) {
+    const totalPrice = filteredData.reduce((sum, row) => sum + (Number(row.price) || 0), 0);
+    document.getElementById("totalPriceCell").textContent = totalPrice + " ج.م";
+    totalRow.style.display = "";
+  } else {
+    totalRow.style.display = "none";
+  }
 }
 
 document.getElementById("exportExcel").addEventListener("click", function () {
