@@ -567,7 +567,17 @@ function applyFiltersAndRenderTable() {
   updateTotalDailyAmount(filteredData);
 }
 
-function loadDailyList() {
+function loadDailyList(keepFilters = false) {
+  let currentOffice = "";
+  let currentWorkOffice = "";
+  let currentNotes = "";
+
+  if (keepFilters) {
+    currentOffice = document.getElementById("filterOffice").value;
+    currentWorkOffice = document.getElementById("filterWorkOffice").value;
+    currentNotes = document.getElementById("filterNotes").value;
+  }
+
   const sheetCSVUrl = "https://script.google.com/macros/s/AKfycbxVOKwY5SsJglGBJRV-uU5wxld2DJJQYLKi_U75pPhwXgIgRZVPieNKB5VBuN2LuJ3h/exec";
 
   fetch(sheetCSVUrl)
@@ -575,15 +585,25 @@ function loadDailyList() {
     .then(data => {
       allDailyData = data;
 
-      // تعبئة الفلاتر مرة واحدة بالقيم الفريدة
-      fillFilterOptions("filterOffice", [...new Set(data.map(r => r.office).filter(Boolean))]);
-      fillFilterOptions("filterWorkOffice", [...new Set(data.map(r => r.workOffice).filter(Boolean))]);
-      fillFilterOptions("filterNotes", [...new Set(data.map(r => r.notes).filter(Boolean))]);
+      // لو مش محتفظ بالفلاتر عبّيهم من جديد
+      if (!keepFilters) {
+        fillFilterOptions("filterOffice", [...new Set(data.map(r => r.office).filter(Boolean))]);
+        fillFilterOptions("filterWorkOffice", [...new Set(data.map(r => r.workOffice).filter(Boolean))]);
+        fillFilterOptions("filterNotes", [...new Set(data.map(r => r.notes).filter(Boolean))]);
+      }
+
+      // رجّع القيم القديمة لو كنا حافظينها
+      if (keepFilters) {
+        document.getElementById("filterOffice").value = currentOffice;
+        document.getElementById("filterWorkOffice").value = currentWorkOffice;
+        document.getElementById("filterNotes").value = currentNotes;
+      }
 
       applyFiltersAndRenderTable();
     })
     .catch(err => console.error("❌ فشل تحميل اليوميات:", err));
 }
+
 
 function fillFilterOptions(selectId, values) {
   const select = document.getElementById(selectId);
@@ -765,25 +785,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // تحديث البيانات كل 10 ثواني (10000 ملي ثانية)
       setInterval(() => {
-        console.log("♻️ تحديث البيانات...");
+  console.log("♻️ تحديث البيانات...");
 
-        // تحديث قائمة المكاتب
-        loadOffices();
+  // تحديث قائمة المكاتب
+  loadOffices();
 
-        // تحديث قائمة اليوميات
-        loadDailyList();
+  // تحديث قائمة اليوميات مع الحفاظ على الفلاتر
+  loadDailyList(true);
 
-        // تحديث ملخص المكاتب لو موجود
-        if (typeof loadOfficeSummary === "function") {
-          loadOfficeSummary();
-        }
+  // تحديث ملخص المكاتب لو موجود
+  if (typeof loadOfficeSummary === "function") {
+    loadOfficeSummary();
+  }
 
-        // تحديث إجمالي اليوميات لو موجود
-        if (typeof updateTotalDailyAmount === "function") {
-          updateTotalDailyAmount();
-        }
+  // تحديث إجمالي اليوميات لو موجود
+  if (typeof updateTotalDailyAmount === "function") {
+    updateTotalDailyAmount();
+  }
 
-      }, 10000); // كل 10 ثواني
+}, 10000);
 
       function updateTotalDailyAmount(data) {
         let total = 0;
