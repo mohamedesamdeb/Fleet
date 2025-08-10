@@ -435,6 +435,11 @@
   <!-- الخيارات هتتعبأ جافاسكربت -->
 </select>
 
+ <!-- زر التصدير -->
+  <button id="exportExcel" style="background-color: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 8px; cursor: pointer;">
+    📥 تصدير Excel
+  </button>
+
 </div>
 
         <table style="width: 100%; border-collapse: collapse; background-color: #f8fafc; margin-top:20px;">
@@ -461,6 +466,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
       // التنقل بين الصفحات
       const links = document.querySelectorAll(".nav-link");
@@ -566,6 +572,44 @@ function applyFiltersAndRenderTable() {
 
   updateTotalDailyAmount(filteredData);
 }
+
+document.getElementById("exportExcel").addEventListener("click", function () {
+  // نجيب البيانات المفلترة حاليًا
+  const filterOffice = document.getElementById("filterOffice").value;
+  const filterWorkOffice = document.getElementById("filterWorkOffice").value;
+  const filterNotes = document.getElementById("filterNotes").value.toLowerCase();
+
+  const filteredData = allDailyData.filter(row => {
+    const matchesOffice = !filterOffice || row.office === filterOffice;
+    const matchesWorkOffice = !filterWorkOffice || row.workOffice === filterWorkOffice;
+    const matchesNotes = !filterNotes || (row.notes && row.notes.toLowerCase().includes(filterNotes));
+    return matchesOffice && matchesWorkOffice && matchesNotes;
+  });
+
+  // نحضر البيانات في شكل مصفوفة
+  const exportData = filteredData.map((row, index) => ({
+    "#": index + 1,
+    "التاريخ": row.date || '',
+    "السائق": row.driver || '',
+    "مكان السيارة": row.carLocation || '',
+    "المكتب": row.office || '',
+    "التغطية": row.coverage || '',
+    "مكتب العمل": row.workOffice || '',
+    "السعر": row.price || '',
+    "ملاحظات": row.notes || ''
+  }));
+
+  // إنشاء ورقة العمل
+  const ws = XLSX.utils.json_to_sheet(exportData, { header: ["#", "التاريخ", "السائق", "مكان السيارة", "المكتب", "التغطية", "مكتب العمل", "السعر", "ملاحظات"] });
+
+  // إنشاء ملف Excel
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "اليوميات");
+
+  // حفظ الملف (مع دعم العربية)
+  XLSX.writeFile(wb, "اليوميات.xlsx", { compression: true });
+});
+
 
 function loadDailyList(keepFilters = false) {
   let currentOffice = "";
