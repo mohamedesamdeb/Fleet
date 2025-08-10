@@ -692,28 +692,27 @@
       document.addEventListener("DOMContentLoaded", loadTotalDailyAmount);
 
 
-      // تحديث البيانات كل 30 ثانية (30000 ملي ثانية)
-setInterval(() => {
-    console.log("♻️ تحديث البيانات...");
-    
-    // تحديث قائمة المكاتب
-    loadOffices();
+      // تحديث البيانات كل 10 ثواني (10000 ملي ثانية)
+      setInterval(() => {
+        console.log("♻️ تحديث البيانات...");
 
-    // تحديث قائمة اليوميات
-    loadDailyList();
+        // تحديث قائمة المكاتب
+        loadOffices();
 
-    // تحديث ملخص المكاتب لو موجود
-    if (typeof loadOfficeSummary === "function") {
-        loadOfficeSummary();
-    }
+        // تحديث قائمة اليوميات
+        loadDailyList();
 
-    // تحديث إجمالي اليوميات لو موجود
-    if (typeof updateTotalDailyAmount === "function") {
-        updateTotalDailyAmount();
-    }
+        // تحديث ملخص المكاتب لو موجود
+        if (typeof loadOfficeSummary === "function") {
+          loadOfficeSummary();
+        }
 
-}, 30000); // كل 30 ثانية
+        // تحديث إجمالي اليوميات لو موجود
+        if (typeof updateTotalDailyAmount === "function") {
+          updateTotalDailyAmount();
+        }
 
+      }, 10000); // كل 10 ثواني
 
       function updateTotalDailyAmount(data) {
         let total = 0;
